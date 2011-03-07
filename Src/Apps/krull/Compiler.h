@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <string>
-
 class Compiler
 {
 public:

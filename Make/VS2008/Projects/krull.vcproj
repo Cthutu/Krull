@@ -182,22 +182,38 @@
 		<Filter
 			Name="Interpreter"
 			>
-			<File
-				RelativePath="..\..\..\Src\Apps\krull\Compiler.cc"
+			<Filter
+				Name="Compilation"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Apps\krull\Compiler.h"
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Compiler.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Compiler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Parser.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Parser.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Model"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Apps\krull\Parser.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\Apps\krull\Parser.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Type.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Type.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Tests"
