@@ -9,9 +9,13 @@
 //-----------------------------------------------------------------------------
 
 #define K_UNUSED(var)	var=var
+#define K_OUT
+#define K_OVERRIDE
 
 #define K_YES (1)
 #define K_NO (0)
+
+#define K_DEBUG_PAUSE() getch()
 
 //-----------------------------------------------------------------------------
 // Build configuration
