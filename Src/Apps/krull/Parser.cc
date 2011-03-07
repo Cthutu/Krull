@@ -85,7 +85,7 @@ static const unsigned int gKeyWordHashes [] =
 	/* 1 */		0,
 	/* 2 */		0,
 	/* 3 */		Token_Table,
-	/* 4 */		0,
+	/* 4 */		Token_String,
 	/* 5 */		0,
 	/* 6 */		0,
 	/* 7 */		0,
@@ -106,6 +106,7 @@ static const char* gKeywords [kNumKeyWords + 1] =
 	"4uses",
 	"5table",
 	"4data",
+	"6string",
 };
 
 //-----------------------------------------------------------------------------
@@ -241,7 +242,7 @@ Token Parser::Next ()
 
 		mTokenEnd = mScan - 1;		// Ignore the trailing quote
 		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
-		return (mToken = Token_String);
+		return (mToken = Token_LiteralString);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -262,6 +263,11 @@ Token Parser::Next ()
 	{
 		mTokenEnd = mScan;
 		return (mToken = Token_ListClose);
+	}
+	else if (ch == ':')
+	{
+		mTokenEnd = mScan;
+		return (mToken = Token_Colon);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -352,13 +358,13 @@ void Parser::Describe()
 	{
 		printf("Name: (%08x)", mHash);
 	}
-	else if (mToken == Token_String)
+	else if (mToken == Token_LiteralString)
 	{
 		printf("String: (%08x)", mHash);
 	}
 	else if (IsOperator(mToken))
 	{
-		const char* ops = "().";
+		const char* ops = "().:";
 		printf("Operator: '%c'", ops[mToken - TOKEN_OPERATORS - 1]);
 	}
 	else if (IsKeyword(mToken))

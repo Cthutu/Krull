@@ -17,19 +17,21 @@ enum Token
 	// Token types
 	Token_Integer,
 	Token_Name,
-	Token_String,
+	Token_LiteralString,
 
 	// Operators
 	TOKEN_OPERATORS,
 	Token_ListOpen,			// (
 	Token_ListClose,		// )
 	Token_Dot,				// .
+	Token_Colon,			// :
 
 	// Keywords
 	TOKEN_KEYWORDS,
 	Token_Uses,				// uses
 	Token_Table,			// table
 	Token_Data,				// data
+	Token_String,			// string
 
 	TOKEN_COUNT
 };
@@ -59,7 +61,7 @@ public:
 	static bool			IsOperator	(Token token)			{ return (token > TOKEN_OPERATORS) && (token < TOKEN_KEYWORDS); }
 	static bool			IsKeyword	(Token token)			{ return (token > TOKEN_KEYWORDS) && (token < TOKEN_COUNT); }
 	static bool			IsName		(Token token)			{ return token == Token_Name; }
-	static bool			IsString	(Token token)			{ return token == Token_String; }
+	static bool			IsString	(Token token)			{ return token == Token_LiteralString; }
 
 protected:
 	char				NextChar	();
