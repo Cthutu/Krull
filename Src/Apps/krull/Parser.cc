@@ -6,6 +6,7 @@
 #include "Parser.h"
 
 #include <string.h>
+#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 // Constructor
@@ -83,7 +84,7 @@ static const unsigned int gKeyWordHashes [] =
 	/* 0 */		0,
 	/* 1 */		0,
 	/* 2 */		0,
-	/* 3 */		0,
+	/* 3 */		Token_Table,
 	/* 4 */		0,
 	/* 5 */		0,
 	/* 6 */		0,
@@ -91,7 +92,7 @@ static const unsigned int gKeyWordHashes [] =
 	/* 8 */		0,
 	/* 9 */		0,
 	/* A */		0,
-	/* B */		0,
+	/* B */		Token_Data,
 	/* C */		0,
 	/* D */		0,
 	/* E */		0,
@@ -103,6 +104,8 @@ static const char* gKeywords [kNumKeyWords + 1] =
 {
 	0,
 	"4uses",
+	"5table",
+	"4data",
 };
 
 //-----------------------------------------------------------------------------
@@ -318,3 +321,58 @@ unsigned int Parser::Hash (const char* buffer, unsigned size, unsigned seed)
 
 	return h;
 }
+
+//-----------------------------------------------------------------------------
+// Describe function
+//-----------------------------------------------------------------------------
+
+void Parser::Describe()
+{
+	printf("Krull: Parser: ");
+
+	char* buffer = new char [mTokenEnd - mTokenStart + 1];
+	strncpy(buffer, mTokenStart, mTokenEnd - mTokenStart);
+	buffer[mTokenEnd - mTokenStart] = 0;
+
+	printf("Token found [%s]: ", buffer);
+
+	if (mToken < 0)
+	{
+		printf("ERROR");
+	}
+	else if (mToken == Token_EOF)
+	{
+		printf("End of file");
+	}
+	else if (mToken == Token_Integer)
+	{
+		printf("Integer: %d", mInteger);
+	}
+	else if (mToken == Token_Name)
+	{
+		printf("Name: (%08x)", mHash);
+	}
+	else if (mToken == Token_String)
+	{
+		printf("String: (%08x)", mHash);
+	}
+	else if (IsOperator(mToken))
+	{
+		const char* ops = "().";
+		printf("Operator: '%c'", ops[mToken - TOKEN_OPERATORS - 1]);
+	}
+	else if (IsKeyword(mToken))
+	{
+		printf("Keyword: '%s'", gKeywords[mToken - TOKEN_KEYWORDS]+1);
+	}
+	else
+	{
+		printf("Unknown");
+	}
+
+	printf("\n");
+	delete [] buffer;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------

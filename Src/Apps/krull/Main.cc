@@ -3,9 +3,10 @@
 //-----------------------------------------------------------------------------
 
 #include "Krull.h"
+#include "Compiler.h"
+
 #include <stdio.h>
 #include <conio.h>
-
 #include <string>
 #include <vector>
 
@@ -29,9 +30,11 @@ struct InputInfo
 {
 	vector<string>		fileNames;
 	bool				verbose;
+	bool				debugParser;
 
 	InputInfo()
 		: verbose(false)
+		, debugParser(false)
 	{}
 };
 
@@ -77,8 +80,16 @@ bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_OUT int&
 
 		return false;
 	}
+	else if (cmd == "debugparser")
+	{
+		info.debugParser = true;
+	}
+	else
+	{
+		return false;
+	}
 
-	return false;
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +134,19 @@ int main (int argc, char** argv)
 		{
 			inputInfo.fileNames.insert(inputInfo.fileNames.end(), argv[i]);
 		}
+	}
+
+	Compiler compiler;
+	if (inputInfo.debugParser)
+	{
+		compiler.DebugParserOn();
+	}
+
+	for (vector<string>::const_iterator it = inputInfo.fileNames.begin();
+		 it != inputInfo.fileNames.end();
+		 ++it)
+	{
+		compiler.Process(*it);
 	}
 
 	K_DEBUG_PAUSE();

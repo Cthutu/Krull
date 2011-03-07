@@ -28,6 +28,8 @@ enum Token
 	// Keywords
 	TOKEN_KEYWORDS,
 	Token_Uses,				// uses
+	Token_Table,			// table
+	Token_Data,				// data
 
 	TOKEN_COUNT
 };
@@ -41,11 +43,13 @@ const int kNumKeyWords = TOKEN_COUNT - TOKEN_KEYWORDS - 1;
 
 class Parser
 {
+public:
 	Parser (const char* buffer, unsigned size);
 
 	// Operations
 	Token				Next		();
 	static unsigned 	Hash		(const char* buffer, unsigned size, unsigned seed);
+	void				Describe	();
 
 	// Attributes
 

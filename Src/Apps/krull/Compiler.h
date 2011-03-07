@@ -13,6 +13,12 @@ public:
 	~Compiler ();
 
 	bool		Process			(const std::string& filename);
+
+	// State methods
+	void		DebugParserOn	();
+
+protected:
+	bool		mDebugParser;
 };
 
 //-----------------------------------------------------------------------------
