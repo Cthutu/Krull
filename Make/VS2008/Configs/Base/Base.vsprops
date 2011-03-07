@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Base"
+	OutputDirectory="$(SolutionDir)..\..\..\Build\Lib\$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+	IntermediateDirectory="$(SolutionDir)..\..\..\Build\Obj\$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(SolutionDir)..\..\..\Src\Libs"
+		WarnAsError="true"
+	/>
+</VisualStudioPropertySheet>

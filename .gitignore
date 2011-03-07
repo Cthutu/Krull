@@ -1,0 +1,12 @@
+# Visual Studio artifacts
+*.suo
+*.ncb
+*.user
+
+# Build environment artifacts
+Build/*
+
+# VIM artifacts
+*~
+
+

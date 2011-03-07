@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Application"
+	OutputDirectory="$(SolutionDir)..\..\..\Build\Bin\$(PlatformName)\$(ConfigurationName)"
+	InheritedPropertySheets=".\Base.vsprops"
+	>
+	<Tool
+		Name="VCLinkerTool"
+		GenerateDebugInformation="true"
+		SubSystem="1"
+		TargetMachine="1"
+	/>
+</VisualStudioPropertySheet>
