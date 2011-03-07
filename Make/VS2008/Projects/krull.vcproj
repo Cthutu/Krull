@@ -178,6 +178,34 @@
 		<Filter
 			Name="Sqlite"
 			>
+			<File
+				RelativePath="..\..\..\Src\Libs\Sqlite\sqlite3.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Libs\Sqlite\sqlite3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Libs\Sqlite\version.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Interpreter"
