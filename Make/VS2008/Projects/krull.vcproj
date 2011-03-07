@@ -39,6 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="Krull.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -99,6 +101,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="Krull.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,6 +146,34 @@
 		<Filter
 			Name="Shell"
 			>
+			<File
+				RelativePath="..\..\..\Src\Apps\krull\Krull.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Apps\krull\Main.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\Apps\krull\Precompiled.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Sqlite"
