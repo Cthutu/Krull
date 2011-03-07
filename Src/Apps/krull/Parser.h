@@ -25,6 +25,7 @@ enum Token
 	Token_ListClose,		// )
 	Token_Dot,				// .
 	Token_Colon,			// :
+	Token_Star,				// *
 
 	// Keywords
 	TOKEN_KEYWORDS,

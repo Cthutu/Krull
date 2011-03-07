@@ -203,6 +203,18 @@
 			Name="Tests"
 			>
 			<File
+				RelativePath="..\..\..\Data\Tests\Class.k"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Data\Tests\Core.k"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Data\Tests\Faction.k"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Data\Tests\Gender.k"
 				>
 			</File>

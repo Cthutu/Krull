@@ -269,6 +269,11 @@ Token Parser::Next ()
 		mTokenEnd = mScan;
 		return (mToken = Token_Colon);
 	}
+	else if (ch == '*')
+	{
+		mTokenEnd = mScan;
+		return (mToken = Token_Star);
+	}
 
 	//-----------------------------------------------------------------------------
 	// Error
@@ -364,7 +369,7 @@ void Parser::Describe()
 	}
 	else if (IsOperator(mToken))
 	{
-		const char* ops = "().:";
+		const char* ops = "().:*";
 		printf("Operator: '%c'", ops[mToken - TOKEN_OPERATORS - 1]);
 	}
 	else if (IsKeyword(mToken))

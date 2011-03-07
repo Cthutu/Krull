@@ -146,6 +146,10 @@ int main (int argc, char** argv)
 		 it != inputInfo.fileNames.end();
 		 ++it)
 	{
+		if (inputInfo.verbose)
+		{
+			printf("Compiling '%s'...\n", it->c_str());
+		}
 		compiler.Process(*it);
 	}
 
