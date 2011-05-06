@@ -1,4 +1,6 @@
 //-----------------------------------------------------------------------------
+// Apps/krull/Compiler.cc
+//
 // Krull Compiler
 //-----------------------------------------------------------------------------
 
@@ -30,14 +32,14 @@ Compiler::~Compiler ()
 }
 
 //-----------------------------------------------------------------------------
-// Main entry point for compiler
+// File opening
 //-----------------------------------------------------------------------------
 
-bool Compiler::Process(const std::string& filename)
+bool Compiler::OpenFile (const std::string& filename, Parser& parser)
 {
 	// Load file
 	fstream f;
-	f.open(filename.c_str(), ios::in);
+	f.open(filename.c_str(), ios::in | ios::binary);
 	if (!f)
 	{
 		printf("Krull: ERROR: Cannot open '%s'", filename);
@@ -49,9 +51,25 @@ bool Compiler::Process(const std::string& filename)
 	char* buffer = new char [fileSize];
 	f.read(buffer, fileSize);
 	f.close();
-	
+
+	parser.Start(buffer, fileSize);
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Main entry point for compiler
+//-----------------------------------------------------------------------------
+
+bool Compiler::Process(const std::string& filename)
+{
 	// Parse the buffer
-	Parser parser (buffer, fileSize);
+	Parser parser;
+
+	if (!OpenFile(filename, parser))
+	{
+		return false;
+	}
 
 	Token token;
 	do
@@ -60,8 +78,6 @@ bool Compiler::Process(const std::string& filename)
 		if (mDebugParser) parser.Describe();
 	}
 	while(!Parser::IsEOF(token));
-
-	delete [] buffer;
 
 	return true;
 }

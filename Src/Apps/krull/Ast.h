@@ -1,30 +1,17 @@
 //-----------------------------------------------------------------------------
-// Apps/krull/Compiler.h
+// Apps/krull/Ast.h
 //
-// Krull compiler class
+// Base class for all AST nodes
 //-----------------------------------------------------------------------------
 
 #pragma once
 
-class Parser;
-
-class Compiler
+class Ast
 {
 public:
-	Compiler ();
-	~Compiler ();
+	Ast ();
 
-	bool		Process			(const std::string& filename);
-
-	// State methods
-	void		DebugParserOn	();
-
-protected:
-	bool		OpenFile		(const std::string& filename, Parser& parser);
-
-protected:
-	bool			mDebugParser;
-	vector<string>	mFilesParsed;
+	virtual bool		Process		() = 0;
 };
 
 //-----------------------------------------------------------------------------

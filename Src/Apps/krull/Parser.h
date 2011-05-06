@@ -1,4 +1,6 @@
 //-----------------------------------------------------------------------------
+// Apps/krull/Parser.h
+//
 // Krull parser
 //-----------------------------------------------------------------------------
 
@@ -47,7 +49,9 @@ const int kNumKeyWords = TOKEN_COUNT - TOKEN_KEYWORDS - 1;
 class Parser
 {
 public:
-	Parser (const char* buffer, unsigned size);
+	Parser ();
+
+	void				Start		(const char* buffer, unsigned size);
 
 	// Operations
 	Token				Next		();
@@ -68,14 +72,26 @@ protected:
 	char				NextChar	();
 	void				UngetChar	();
 
-private:
-	// Buffer information
-	const char*		mBuffer;
-	const char*		mEnd;
+	struct ParseState;
+	ParseState&			GetState	()						{ return mParseStack[mParseStack.size()-1]; }
 
-	// Scan information
-	const char*		mScan;
-	unsigned int	mLine;
+private:
+	struct ParseState
+	{
+		// Buffer information
+		const char*		mBuffer;
+		const char*		mEnd;
+
+		// Parser internal state
+		const char*		mLastScan;
+		unsigned int	mLastLine;
+
+		// Scan information
+		const char*		mScan;
+		unsigned int	mLine;
+
+		void Init (const char* buffer, unsigned int size);
+	};
 
 	// Token information
 	const char*		mTokenStart;
@@ -84,8 +100,5 @@ private:
 	unsigned int	mHash;
 	int				mInteger;
 
-	// Parser internal state
-	const char*		mLastScan;
-	unsigned int	mLastLine;
-
+	vector<ParseState>	mParseStack;
 };

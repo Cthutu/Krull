@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------------
+// Apps/krull/Parser.cc
+//
+// Implementation of the Krull parser
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // Krull parser implementation
 //-----------------------------------------------------------------------------
 
@@ -6,21 +12,37 @@
 #include "Parser.h"
 
 //-----------------------------------------------------------------------------
+// ParserState
+//-----------------------------------------------------------------------------
+
+void Parser::ParseState::Init (const char* buffer, unsigned int size)
+{
+	mBuffer = buffer;
+	mEnd = buffer + size;
+	mScan = buffer;
+	mLine = 1;
+	mLastScan = mScan;
+	mLastLine = mLine;
+}
+
+//-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
 
-Parser::Parser (const char* buffer, unsigned size)
-: mBuffer(buffer)
-, mEnd(buffer + size)
-, mScan(buffer)
-, mLine(1)
-, mTokenStart(0)
+Parser::Parser ()
+: mTokenStart(0)
 , mTokenEnd(0)
 , mToken(Token_ERROR_Unknown)
 , mHash(0)
 , mInteger(0)
 {
+}
 
+void Parser::Start (const char* buffer, unsigned size)
+{
+	ParseState ps;
+	ps.Init(buffer,size);
+	mParseStack.push_back(ps);
 }
 
 //-----------------------------------------------------------------------------
@@ -30,17 +52,18 @@ Parser::Parser (const char* buffer, unsigned size)
 char Parser::NextChar()
 {
 	char ch;
+	ParseState& ps = GetState();
 
-	mLastScan = mScan;
-	mLastLine = mLastLine;
+	ps.mLastScan = ps.mScan;
+	ps.mLastLine = ps.mLastLine;
 
 	// Check for end of file
-	if (mScan == mEnd)
+	if (ps.mScan == ps.mEnd)
 	{
 		return 0;
 	}
 
-	ch = *mScan++;
+	ch = *ps.mScan++;
 
 	// Check for end of line:
 	//		Windows:	\r\n
@@ -50,13 +73,13 @@ char Parser::NextChar()
 	// Whichever version, only return \n
 	if ((ch == '\r') || (ch == '\n'))
 	{
-		++mLine;
+		++ps.mLine;
 		if (ch == '\r')
 		{
 			// Check for possible following \n and skip it
-			if ((mScan != mEnd) && (*mScan == '\n'))
+			if ((ps.mScan != ps.mEnd) && (*ps.mScan == '\n'))
 			{
-				++mScan;
+				++ps.mScan;
 			}
 
 			ch = '\n';
@@ -68,8 +91,9 @@ char Parser::NextChar()
 
 void Parser::UngetChar()
 {
-	mScan = mLastScan;
-	mLine = mLastLine;
+	ParseState& ps = GetState();
+	ps.mScan = ps.mLastScan;
+	ps.mLine = ps.mLastLine;
 }
 
 //-----------------------------------------------------------------------------
@@ -113,6 +137,7 @@ static const char* gKeywords [kNumKeyWords + 1] =
 Token Parser::Next ()
 {
 	char ch;
+	ParseState& ps = GetState();
 
 	for(;;)
 	{
@@ -120,7 +145,21 @@ Token Parser::Next ()
 		do
 		{
 			ch = NextChar();
-			if (ch == 0) return Token_EOF;
+			if (ch == 0)
+			{
+				// Handle end of file
+				delete [] ps.mBuffer;
+				mParseStack.erase(mParseStack.begin() + mParseStack.size() - 1);
+
+				if (mParseStack.size() == 0)
+				{
+					return (mToken = Token_EOF);
+				}
+				else
+				{
+					ps = GetState();
+				}
+			}
 		}
 		while ((ch <= ' ') || (ch > 126));
 
@@ -140,7 +179,7 @@ Token Parser::Next ()
 		}
 	}
 
-	mTokenStart = mScan - 1;
+	mTokenStart = ps.mScan - 1;
 
 	//-----------------------------------------------------------------------------
 	// Integer
@@ -168,7 +207,7 @@ Token Parser::Next ()
 		}
 
 		UngetChar();
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_Integer);
 	}
 
@@ -188,7 +227,7 @@ Token Parser::Next ()
 			ch = NextChar();
 		}
 		UngetChar();
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
 
 		// Determine if this is a keyword or not
@@ -219,7 +258,7 @@ Token Parser::Next ()
 
 	else if (ch == '"')
 	{
-		mTokenStart = mScan;
+		mTokenStart = ps.mScan;
 		do
 		{
 			ch = NextChar();
@@ -233,11 +272,11 @@ Token Parser::Next ()
 			{
 				UngetChar();
 			}
-			mTokenEnd = mScan;
+			mTokenEnd = ps.mScan;
 			return (mToken = Token_ERROR_UnterminatedString);
 		}
 
-		mTokenEnd = mScan - 1;		// Ignore the trailing quote
+		mTokenEnd = ps.mScan - 1;		// Ignore the trailing quote
 		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
 		return (mToken = Token_LiteralString);
 	}
@@ -248,27 +287,27 @@ Token Parser::Next ()
 	
 	else if (ch == '.')
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_Dot);
 	}
 	else if (ch == '(')
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_ListOpen);
 	}
 	else if (ch == ')')
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_ListClose);
 	}
 	else if (ch == ':')
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_Colon);
 	}
 	else if (ch == '*')
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_Star);
 	}
 
@@ -278,7 +317,7 @@ Token Parser::Next ()
 
 	else
 	{
-		mTokenEnd = mScan;
+		mTokenEnd = ps.mScan;
 		return (mToken = Token_ERROR_InvalidChar);
 	}
 }
@@ -336,13 +375,18 @@ unsigned int Parser::Hash (const char* buffer, unsigned size, unsigned seed)
 
 void Parser::Describe()
 {
-	printf("Krull: Parser: ");
+	char* buffer = 0;
 
-	char* buffer = new char [mTokenEnd - mTokenStart + 1];
-	strncpy(buffer, mTokenStart, mTokenEnd - mTokenStart);
-	buffer[mTokenEnd - mTokenStart] = 0;
+	if (mToken != Token_EOF)
+	{
+		printf("Krull: Parser: ");
 
-	printf("Token found [%s]: ", buffer);
+		buffer = new char [mTokenEnd - mTokenStart + 1];
+		strncpy(buffer, mTokenStart, mTokenEnd - mTokenStart);
+		buffer[mTokenEnd - mTokenStart] = 0;
+
+		printf("Token found [%s]: ", buffer);
+	}
 
 	if (mToken < 0)
 	{
