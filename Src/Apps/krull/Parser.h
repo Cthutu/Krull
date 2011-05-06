@@ -51,14 +51,18 @@ class Parser
 public:
 	Parser ();
 
-	void				Start		(const char* buffer, unsigned size);
+	void				Start		(const string& fileName, const char* buffer, unsigned size);
 
 	// Operations
 	Token				Next		();
 	static unsigned 	Hash		(const char* buffer, unsigned size, unsigned seed);
-	void				Describe	();
+	void				Describe	() const;
+	string				ShortDesc	() const;
 
 	// Attributes
+	string				GetFileName	() const				{ return GetState().mFileName; }
+	unsigned int		GetLine		() const				{ return GetState().mLine; }
+	string				GetString	() const				{ return string(mTokenStart, mTokenEnd); }
 
 	// Queries
 	static bool			IsInteger	(Token token)			{ return token == Token_Integer; }
@@ -74,10 +78,14 @@ protected:
 
 	struct ParseState;
 	ParseState&			GetState	()						{ return mParseStack[mParseStack.size()-1]; }
+	const ParseState&	GetState	() const				{ return mParseStack[mParseStack.size()-1]; }
 
 private:
 	struct ParseState
 	{
+		// Filename
+		string			mFileName;
+
 		// Buffer information
 		const char*		mBuffer;
 		const char*		mEnd;
@@ -90,7 +98,7 @@ private:
 		const char*		mScan;
 		unsigned int	mLine;
 
-		void Init (const char* buffer, unsigned int size);
+		void Init (const string& fileName, const char* buffer, unsigned int size);
 	};
 
 	// Token information

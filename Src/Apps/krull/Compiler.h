@@ -14,17 +14,24 @@ public:
 	Compiler ();
 	~Compiler ();
 
-	bool		Process			(const std::string& filename);
+	bool				Process				(const std::string& filename);
 
 	// State methods
-	void		DebugParserOn	();
+	void				DebugParserOn		();
+	void				VerboseOn			();
 
 protected:
-	bool		OpenFile		(const std::string& filename, Parser& parser);
+	bool				OpenFile			(const std::string& filename, Parser& parser);
+	bool				ErrorArgs			(const Parser& parser, const char* errMsg, va_list args);
+	bool				Error				(const Parser& parser, const char* errMsg, ...);
+
+	// Phrase compilation
+	bool				ProcessUses			(Parser& parser);
 
 protected:
-	bool			mDebugParser;
-	vector<string>	mFilesParsed;
+	bool				mDebugParser;
+	bool				mVerbose;
+	vector<string>		mFilesParsed;
 };
 
 //-----------------------------------------------------------------------------

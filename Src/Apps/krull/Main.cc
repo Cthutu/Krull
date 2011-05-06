@@ -10,6 +10,7 @@
 
 #include "Krull.h"
 #include "Compiler.h"
+#include "Filename.h"
 
 #include <conio.h>
 
@@ -144,15 +145,15 @@ int main (int argc, char** argv)
 	{
 		compiler.DebugParserOn();
 	}
+	if (inputInfo.verbose)
+	{
+		compiler.VerboseOn();
+	}
 
 	for (vector<string>::const_iterator it = inputInfo.fileNames.begin();
 		 it != inputInfo.fileNames.end();
 		 ++it)
 	{
-		if (inputInfo.verbose)
-		{
-			printf("Compiling '%s'...\n", it->c_str());
-		}
 		compiler.Process(*it);
 	}
 

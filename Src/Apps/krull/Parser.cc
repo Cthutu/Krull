@@ -15,8 +15,9 @@
 // ParserState
 //-----------------------------------------------------------------------------
 
-void Parser::ParseState::Init (const char* buffer, unsigned int size)
+void Parser::ParseState::Init (const string& fileName, const char* buffer, unsigned int size)
 {
+	mFileName = fileName;
 	mBuffer = buffer;
 	mEnd = buffer + size;
 	mScan = buffer;
@@ -38,10 +39,10 @@ Parser::Parser ()
 {
 }
 
-void Parser::Start (const char* buffer, unsigned size)
+void Parser::Start (const string& fileName, const char* buffer, unsigned size)
 {
 	ParseState ps;
-	ps.Init(buffer,size);
+	ps.Init(fileName, buffer,size);
 	mParseStack.push_back(ps);
 }
 
@@ -55,7 +56,7 @@ char Parser::NextChar()
 	ParseState& ps = GetState();
 
 	ps.mLastScan = ps.mScan;
-	ps.mLastLine = ps.mLastLine;
+	ps.mLastLine = ps.mLine;
 
 	// Check for end of file
 	if (ps.mScan == ps.mEnd)
@@ -130,6 +131,9 @@ static const char* gKeywords [kNumKeyWords + 1] =
 	"6string",
 };
 
+// Must be the same order as the KparserToken enum definition
+static const char* gOps = "().:*";
+
 //-----------------------------------------------------------------------------
 // Parser
 //-----------------------------------------------------------------------------
@@ -171,7 +175,6 @@ Token Parser::Next ()
 			{
 				ch = NextChar();
 			}
-			UngetChar();
 		}
 		else
 		{
@@ -373,7 +376,7 @@ unsigned int Parser::Hash (const char* buffer, unsigned size, unsigned seed)
 // Describe function
 //-----------------------------------------------------------------------------
 
-void Parser::Describe()
+void Parser::Describe() const
 {
 	char* buffer = 0;
 
@@ -411,7 +414,7 @@ void Parser::Describe()
 	else if (IsOperator(mToken))
 	{
 		const char* ops = "().:*";
-		printf("Operator: '%c'", ops[mToken - TOKEN_OPERATORS - 1]);
+		printf("Operator: '%c'", gOps[mToken - TOKEN_OPERATORS - 1]);
 	}
 	else if (IsKeyword(mToken))
 	{
@@ -424,6 +427,50 @@ void Parser::Describe()
 
 	printf("\n");
 	delete [] buffer;
+}
+
+string Parser::ShortDesc () const
+{
+	char* buffer = new char [mTokenEnd - mTokenStart + 1];
+	strncpy(buffer, mTokenStart, mTokenEnd - mTokenStart);
+	buffer[mTokenEnd - mTokenStart] = 0;
+
+	string result;
+
+	switch(mToken)
+	{
+	case Token_EOF:
+		result = "<EOF>";
+		break;
+
+	case Token_Integer:
+		{
+			char intBuffer [20];
+			result = itoa(mInteger, intBuffer, 10);
+		}
+		break;
+
+	case Token_Name:
+	case Token_LiteralString:
+		result = buffer;
+		break;
+
+	default:
+		if (IsOperator(mToken) || IsKeyword(mToken))
+		{
+			result = buffer;
+		}
+		else if (mToken < 0)
+		{
+			result = "<error>";
+		}
+		else
+		{
+			result = "<undefined>";
+		}
+	}
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------
