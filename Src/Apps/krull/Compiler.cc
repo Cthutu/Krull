@@ -38,7 +38,7 @@ Compiler::~Compiler ()
 // File opening
 //-----------------------------------------------------------------------------
 
-bool Compiler::OpenFile (const std::string& filename, Parser& parser)
+bool Compiler::OpenFile (const string& filename, Parser& parser)
 {
 	// Normalise the filename
 	string fullName = FileName::NormaliseFileName(filename);
@@ -49,10 +49,7 @@ bool Compiler::OpenFile (const std::string& filename, Parser& parser)
 	}
 
 	// Verbose message
-	if (mVerbose)
-	{
-		cout << "Compiling " << fullName << "..." << endl;
-	}
+	Status("Compiling %s...", fullName.c_str());
 
 	// Load file
 	fstream f;
@@ -101,18 +98,51 @@ bool Compiler::Error (const Parser& parser, const char* errMsg, ...)
 }
 
 //-----------------------------------------------------------------------------
+// Status messages
+// Only switched on if mVerbose is true
+//-----------------------------------------------------------------------------
+
+void Compiler::StatusArgs (const char* msg, va_list args)
+{
+	if (mVerbose)
+	{
+		char msgBuffer [1024];
+		_vsnprintf_s(msgBuffer, 1024, msg, args);
+
+		cout << "--> " << msgBuffer << endl;
+	}
+}
+
+void Compiler::Status (const char* msg, ...)
+{
+	if (mVerbose)
+	{
+		va_list args;
+		va_start(args, msg);
+		StatusArgs(msg, args);
+		va_end(args);
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Main entry point for compiler
 //-----------------------------------------------------------------------------
 
-bool Compiler::Process(const std::string& filename)
+bool Compiler::Process(const string& filename)
 {
 	// Parse the buffer
 	Parser parser;
 
 	if (!OpenFile(filename, parser))
 	{
+		cout << "Cannot open '" << filename << "'" << endl;
 		return false;
 	}
+
+	// Initialise the project
+	string projectName = FileName::ExtractRootName(filename);
+
+	Status("Initialising project '%s'", projectName.c_str());
 
 	Token token;
 	do

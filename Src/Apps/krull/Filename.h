@@ -13,15 +13,16 @@ namespace FileName
 	// Operations
 	//-----------------------------------------------------------------------------
 	
-	std::string		NormaliseFileName		(const std::string& fileName);
-	std::string		ExtractPath				(const std::string& normalisedFileName);
-	std::string		ExtractExtension		(const std::string& fileName);
+	string		NormaliseFileName		(const string& fileName);
+	string		ExtractPath				(const string& normalisedFileName);
+	string		ExtractExtension		(const string& fileName);
+	string		ExtractRootName			(const string& fileName);
 	
 	//-----------------------------------------------------------------------------
 	// Attributes
 	//-----------------------------------------------------------------------------
 	
-	bool			IsFullPath				(const std::string& fileName);
+	bool			IsFullPath				(const string& fileName);
 
 	//-----------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------

@@ -15,7 +15,7 @@ namespace FileName
 
 #if K_WIN32
 
-	string NormaliseFileName (const std::string& filename)
+	string NormaliseFileName (const string& filename)
 	{
 		char fullName [MAX_PATH+1];
 		GetFullPathNameA(filename.c_str(), MAX_PATH, fullName, 0);
@@ -23,7 +23,7 @@ namespace FileName
 		return string(fullName);
 	}
 
-	string ExtractPath (const std::string& normalisedFileName)
+	string ExtractPath (const string& normalisedFileName)
 	{
 		unsigned len = normalisedFileName.length();
 		unsigned i;
@@ -40,7 +40,7 @@ namespace FileName
 		return normalisedFileName.substr(0, i);
 	}
 
-	string ExtractExtension (const std::string& fileName)
+	string ExtractExtension (const string& fileName)
 	{
 		unsigned len = fileName.length();
 		unsigned i;
@@ -57,7 +57,24 @@ namespace FileName
 		return fileName.substr(i, len - i);
 	}
 
-	bool IsFullPath (const std::string& fileName)
+	string ExtractRootName (const string& fileName)
+	{
+		unsigned len = fileName.length();
+		unsigned i;
+
+		for (i = len; i > 0; --i)
+		{
+			if (fileName[i-1] == '\\') break;
+		}
+		
+		unsigned start = i;
+
+		for (; fileName[i] != '.' && fileName[i] != 0; ++i) ;
+
+		return fileName.substr(start, i - start);
+	}
+
+	bool IsFullPath (const string& fileName)
 	{
 		return (fileName.length() > 2) && (fileName[1] == ':');
 	}
