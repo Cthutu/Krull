@@ -12,7 +12,9 @@
 #include "Compiler.h"
 #include "Filename.h"
 
-#include <conio.h>
+#if K_WIN32
+#	include <crtdbg.h>
+#endif
 
 using namespace std;
 
@@ -100,7 +102,7 @@ bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_OUT int&
 // Main entry point
 //-----------------------------------------------------------------------------
 
-int main (int argc, char** argv)
+int Start (int argc, char** argv)
 {
 	if (argc == 1)
 	{
@@ -159,6 +161,24 @@ int main (int argc, char** argv)
 
 	K_DEBUG_PAUSE();
 	return 0;
+}
+
+int main (int argc, char** argv)
+{
+#if K_WIN32
+	_CrtSetBreakAlloc(0);
+#endif
+
+	int result = Start(argc, argv);
+
+#if K_WIN32
+	if (!_CrtDumpMemoryLeaks())
+	{
+		OutputDebugStringA("\n\nNo memory leaks found!\n\n");
+	}
+#endif
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------

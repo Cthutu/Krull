@@ -6,8 +6,8 @@
 
 #include "Krull.h"
 #include "Compiler.h"
-#include "Parser.h"
 #include "Filename.h"
+#include "Project.h"
 
 #include <fstream>
 #include <iostream>
@@ -82,7 +82,7 @@ bool Compiler::ErrorArgs (const Parser& parser, const char* errMsg, va_list args
 	char errorBuffer [1024];
 	_vsnprintf_s(errorBuffer, 1024, errMsg, args);
 
-	cerr << parser.GetFileName().c_str() << " (" << parser.GetLine() << "): ";
+	cerr << parser.GetFileName() << " (" << parser.GetLine() << "): ";
 	cerr << errorBuffer << endl;
 
 	return false;
@@ -125,6 +125,26 @@ void Compiler::Status (const char* msg, ...)
 }
 
 //-----------------------------------------------------------------------------
+// Info messages
+//-----------------------------------------------------------------------------
+
+void Compiler::InfoArgs (const char* msg, va_list args)
+{
+	char msgBuffer [1024];
+	_vsnprintf_s(msgBuffer, 1024, msg, args);
+
+	cout << "Info: " << msgBuffer << endl;
+}
+
+void Compiler::Info (const char* msg, ...)
+{
+	va_list args;
+	va_start(args, msg);
+	StatusArgs(msg, args);
+	va_end(args);
+}
+
+//-----------------------------------------------------------------------------
 // Main entry point for compiler
 //-----------------------------------------------------------------------------
 
@@ -141,14 +161,14 @@ bool Compiler::Process(const string& filename)
 
 	// Initialise the project
 	string projectName = FileName::ExtractRootName(filename);
-
 	Status("Initialising project '%s'", projectName.c_str());
+	mProject = new Project (*this, projectName, FileName::ExtractPath(filename));
 
 	Token token;
+	bool errorFound = false;
 	do
 	{
-		token = parser.Next();
-		if (mDebugParser) parser.Describe();
+		token = NextToken(parser);
 
 		//
 		// Main statement junction
@@ -156,17 +176,60 @@ bool Compiler::Process(const string& filename)
 		switch(token)
 		{
 		case Token_Uses:
-			if (!ProcessUses(parser)) return false;
+			if (!ProcessUses(parser)) errorFound = true;
+			break;
+
+		case Token_Table:
+			if (!ProcessTable(parser)) errorFound = true;
 			break;
 
 		default:
 			Error(parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
-			return false;
+			errorFound = true;
+			break;
 		}
 	}
-	while(!Parser::IsEOF(token));
+	while(!errorFound && !Parser::IsEOF(token));
+
+	//
+	// Invoke the back-end
+	//
+	if (!errorFound)
+	{
+
+	}
+
+	//
+	// Clean up
+	//
+	delete mProject;
+	mProject = 0;
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Compiler utilties
+//-----------------------------------------------------------------------------
+
+bool Compiler::ExpectToken (Parser& parser, Token token)
+{
+	Token nextToken = NextToken(parser);
+
+	if (nextToken != token)
+	{
+		return Error(parser, "Syntax error, %s expected but '%s' found", Parser::ShortDesc(token),
+			parser.ShortDesc());
+	}
+
+	return true;
+}
+
+Token Compiler::NextToken (Parser& parser)
+{
+	Token token = parser.Next();
+	if (mDebugParser) parser.Describe();
+	return token;
 }
 
 //-----------------------------------------------------------------------------
@@ -179,8 +242,7 @@ bool Compiler::Process(const string& filename)
 
 bool Compiler::ProcessUses (Parser& parser)
 {
-	Token token = parser.Next();
-	if (mDebugParser) parser.Describe();
+	Token token = NextToken(parser);
 
 	string usesFileName;
 
@@ -212,6 +274,86 @@ bool Compiler::ProcessUses (Parser& parser)
 	OpenFile(usesFileName, parser);
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Table clause
+// Syntax:
+//		table <name> ( [<field type> <field name>]+ )
+//-----------------------------------------------------------------------------
+
+bool Compiler::ProcessTable (Parser& parser)
+{
+	if (ExpectToken(parser, Token_Name))
+	{
+		Table& table = mProject->NewTable(parser.GetString());
+
+		if (!ExpectToken(parser, Token_ListOpen))
+		{
+			return false;
+		}
+
+		for(;;)
+		{
+			Token token = NextToken(parser);
+			if (Token_ListClose == token)
+			{
+				if (table.NumFields() == 0)
+				{
+					return Error(parser, "Table '%s' has no fields", table.GetName());
+				}
+				
+				// Table definition complete
+				return true;
+			}
+			else
+			{
+				// Process possible field
+				Type fieldType;
+				string fieldName;
+
+				// Expect field type
+				// Can be:
+				//		string
+				//		int
+				//		float
+				//		bool
+				//
+				switch(token)
+				{
+				case Token_String:		fieldType.SetType(TypeValue_String);			break;
+				case Token_Int:			fieldType.SetType(TypeValue_Integer);			break;
+				case Token_Float:		fieldType.SetType(TypeValue_Float);				break;
+				case Token_Bool:		fieldType.SetType(TypeValue_Bool);				break;
+				default:
+					return Error(parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc());
+				}
+
+				// Expect field name
+				token = NextToken(parser);
+				if (Token_Name == token)
+				{
+					fieldName = parser.GetString();
+
+					if (!table.AddField(fieldName, fieldType))
+					{
+						return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc());
+					}
+				}
+				else
+				{
+					return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc());
+				}
+			}
+		}
+		
+	}
+	else
+	{
+		// No table name
+		Info("Table definition has no name");
+		return false;
+	}
 }
 
 //-----------------------------------------------------------------------------

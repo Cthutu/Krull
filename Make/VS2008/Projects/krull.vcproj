@@ -236,6 +236,22 @@
 				Name="Model"
 				>
 				<File
+					RelativePath="..\..\..\Src\Apps\krull\Project.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Project.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Table.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Table.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Src\Apps\krull\Type.cc"
 					>
 				</File>

@@ -6,7 +6,8 @@
 
 #pragma once
 
-class Parser;
+#include "Parser.h"
+
 class Project;
 
 class Compiler
@@ -21,12 +22,20 @@ public:
 	void				DebugParserOn		();
 	void				VerboseOn			();
 
+	// Status messages - used by other classes (e.g. Project)
+	void				StatusArgs			(const char* msg, va_list args);
+	void				Status				(const char* msg, ...);
+
 protected:
 	bool				OpenFile			(const string& filename, Parser& parser);
 	bool				ErrorArgs			(const Parser& parser, const char* errMsg, va_list args);
 	bool				Error				(const Parser& parser, const char* errMsg, ...);
-	void				StatusArgs			(const char* msg, va_list args);
-	void				Status				(const char* msg, ...);
+	void				InfoArgs			(const char* msg, va_list args);
+	void				Info				(const char* msg, ...);
+
+	// Compilation utilities
+	bool				ExpectToken			(Parser& parser, Token token);
+	Token				NextToken			(Parser& parser);
 
 	// Phrase compilation
 	bool				ProcessUses			(Parser& parser);

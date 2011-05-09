@@ -35,6 +35,9 @@ enum Token
 	Token_Table,			// table
 	Token_Data,				// data
 	Token_String,			// string
+	Token_Int,				// int
+	Token_Float,			// float
+	Token_Bool,				// bool
 
 	TOKEN_COUNT
 };
@@ -50,14 +53,17 @@ class Parser
 {
 public:
 	Parser ();
+	~Parser ();
 
 	void				Start		(const string& fileName, const char* buffer, unsigned size);
+	void				End			();
 
 	// Operations
 	Token				Next		();
 	static unsigned 	Hash		(const char* buffer, unsigned size, unsigned seed);
 	void				Describe	() const;
 	string				ShortDesc	() const;
+	static string		ShortDesc	(Token token);
 
 	// Attributes
 	string				GetFileName	() const				{ return GetState().mFileName; }

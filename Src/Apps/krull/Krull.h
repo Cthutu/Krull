@@ -19,7 +19,7 @@
 #define K_YES (1)
 #define K_NO (0)
 
-#define K_DEBUG_PAUSE() getch()
+#define K_DEBUG_PAUSE()
 
 //-----------------------------------------------------------------------------
 // Build configuration
@@ -39,6 +39,9 @@
 #	define K_WIN32 K_YES
 #	define WIN32_LEAN_AND_MEAN
 #	include <Windows.h>
+#	include <conio.h>
+#	undef K_DEBUG_PAUSE
+#	define K_DEBUG_PAUSE() getch()
 #endif
 
 //-----------------------------------------------------------------------------
@@ -64,6 +67,7 @@
 // C++ includes
 #include <string>
 #include <vector>
+#include <map>
 #include <algorithm>
 
 using namespace std;

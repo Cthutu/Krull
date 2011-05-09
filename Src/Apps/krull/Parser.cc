@@ -39,11 +39,26 @@ Parser::Parser ()
 {
 }
 
+Parser::~Parser ()
+{
+	while (mParseStack.size() > 0)
+	{
+		End();
+	}
+}
+
 void Parser::Start (const string& fileName, const char* buffer, unsigned size)
 {
 	ParseState ps;
 	ps.Init(fileName, buffer,size);
 	mParseStack.push_back(ps);
+}
+
+void Parser::End ()
+{
+	ParseState& ps = GetState();
+	delete [] ps.mBuffer;
+	mParseStack.erase(mParseStack.begin() + mParseStack.size() - 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -129,6 +144,9 @@ static const char* gKeywords [kNumKeyWords + 1] =
 	"5table",
 	"4data",
 	"6string",
+	"3int",
+	"5float",
+	"4bool",
 };
 
 // Must be the same order as the KparserToken enum definition
@@ -152,8 +170,7 @@ Token Parser::Next ()
 			if (ch == 0)
 			{
 				// Handle end of file
-				delete [] ps.mBuffer;
-				mParseStack.erase(mParseStack.begin() + mParseStack.size() - 1);
+				End();
 
 				if (mParseStack.size() == 0)
 				{
@@ -463,6 +480,35 @@ string Parser::ShortDesc () const
 		else if (mToken < 0)
 		{
 			result = "<error>";
+		}
+		else
+		{
+			result = "<undefined>";
+		}
+	}
+
+	delete [] buffer;
+	return result;
+}
+
+string Parser::ShortDesc (Token token)
+{
+	string result;
+
+	switch(token)
+	{
+	case Token_EOF:				result = "<EOF>";		break;
+	case Token_Integer:			result = "<integer>";	break;
+	case Token_Name:			result = "<name>";		break;
+	case Token_LiteralString:	result = "<string>";	break;
+	default:
+		if (IsOperator(token))
+		{
+			result = gOps[token - TOKEN_OPERATORS - 1];
+		}
+		else if (IsKeyword(token))
+		{
+			result = gKeywords[token - TOKEN_KEYWORDS] + 1;
 		}
 		else
 		{
