@@ -296,6 +296,10 @@
 				RelativePath="..\..\..\Data\Tests\Gender.k"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\Data\Tests\Test.k"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Utilties"

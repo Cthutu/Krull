@@ -6,8 +6,8 @@
 
 #include "Krull.h"
 #include "Value.h"
-#include "Type.h"
 #include "Table.h"
+#include "Data.h"
 
 //-----------------------------------------------------------------------------
 // Value constructors
@@ -37,17 +37,17 @@ Value::Value (const Type& type, const string& s)
 	mData.mString = new string(s);
 }
 
-Value::Value (const Type& type, const Table& table, unsigned int ref)
+Value::Value (const Type& type, const Data& data, unsigned int ref)
 {
-	K_ASSERT(type.GetType() == TypeValue_TableRef);
-	(void)table;
+	K_ASSERT(type.GetType() == TypeValue_DataRef);
+	(void)data;
 	mData.mTableRef = ref;
 }
 
-Value::Value (const Type& type, const Table& table)
+Value::Value (const Type& type, const Data& data)
 {
-	K_ASSERT(type.GetType() == TypeValue_TableRefList);
-	(void)table;
+	K_ASSERT(type.GetType() == TypeValue_DataRefList);
+	(void)data;
 	mData.mTableRefList = new vector<unsigned int>();
 }
 
@@ -60,7 +60,7 @@ Value::~Value ()
 // Table references
 //-----------------------------------------------------------------------------
 
-void Value::AddTableRef (unsigned int ref)
+void Value::AddDataRef (unsigned int ref)
 {
 	// We assume that the data holds a pointer to a vector of table references.
 	// We have no way to protect against this as type information is not stored
@@ -69,7 +69,7 @@ void Value::AddTableRef (unsigned int ref)
 	mData.mTableRefList->push_back(ref);
 }
 
-unsigned int Value::NumTableRefs () const
+unsigned int Value::NumDataRefs () const
 {
 	K_ASSERT(mData.mTableRefList != 0);
 	return mData.mTableRefList->size();
@@ -85,7 +85,7 @@ void Value::Clean (const Type& type)
 	{
 	case TypeValue_Integer:
 	case TypeValue_Float:
-	case TypeValue_TableRef:
+	case TypeValue_DataRef:
 		mData.mInteger = 0;
 		break;
 
@@ -98,7 +98,7 @@ void Value::Clean (const Type& type)
 		mData.mString = 0;
 		break;
 
-	case TypeValue_TableRefList:
+	case TypeValue_DataRefList:
 		delete mData.mTableRefList;
 		mData.mTableRefList = 0;
 		break;
@@ -108,6 +108,11 @@ void Value::Clean (const Type& type)
 		K_ASSERT(0);
 		break;
 	}
+}
+
+void Value::Release ()
+{
+	mData.mInteger = 0;
 }
 
 //-----------------------------------------------------------------------------

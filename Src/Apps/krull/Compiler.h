@@ -9,6 +9,10 @@
 #include "Parser.h"
 
 class Project;
+class KTable;
+class Data;
+class Type;
+class Value;
 
 class Compiler
 {
@@ -41,8 +45,9 @@ protected:
 	bool				ProcessUses			(Parser& parser);
 	bool				ProcessTable		(Parser& parser);
 	bool				ProcessData			(Parser& parser);
-	bool				ProcessEntry		(Parser& parser);
-	bool				ProcessField		(Parser& parser);
+	bool				ProcessEntry		(Parser& parser, const KTable& table, Data& data);
+	bool				ProcessField		(Parser& parser, const KTable& table, Data& data);
+	bool				AddDataField		(Parser& parser, Data& data, const Type& type, Value& value);
 
 protected:
 	bool				mDebugParser;

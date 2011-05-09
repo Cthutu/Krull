@@ -10,11 +10,11 @@
 
 class Compiler;
 
-class Table
+class KTable
 {
 public:
-	Table (Compiler& compiler, const string& name);
-	~Table ();
+	KTable (Compiler& compiler, const string& name);
+	~KTable ();
 
 	bool			AddField		(const string& name, const Type& type);
 	unsigned int	NumFields		() const;

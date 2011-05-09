@@ -38,6 +38,8 @@ enum Token
 	Token_Int,				// int
 	Token_Float,			// float
 	Token_Bool,				// bool
+	Token_True,				// true
+	Token_False,			// false
 
 	TOKEN_COUNT
 };
@@ -66,9 +68,11 @@ public:
 	static string		ShortDesc	(Token token);
 
 	// Attributes
+	Token				GetToken	() const				{ return mToken; }
 	string				GetFileName	() const				{ return GetState().mFileName; }
 	unsigned int		GetLine		() const				{ return GetState().mLine; }
 	string				GetString	() const				{ return string(mTokenStart, mTokenEnd); }
+	int					GetInteger	() const				{ return mInteger; }
 
 	// Queries
 	static bool			IsInteger	(Token token)			{ return token == Token_Integer; }

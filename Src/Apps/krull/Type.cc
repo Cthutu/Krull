@@ -32,10 +32,31 @@ void Type::SetList ()
 	mIsList = true;
 }
 
-void Type::SetTableName(const string& tableName)
+void Type::SetDataName(const string& dataName)
 {
-	K_ASSERT(mType == TypeValue_TableRef);
-	mTableName = tableName;
+	K_ASSERT(mType == TypeValue_DataRef);
+	mDataName = dataName;
+}
+
+//-----------------------------------------------------------------------------
+// Description of type
+//-----------------------------------------------------------------------------
+
+string Type::ShortDesc () const
+{
+	string result;
+
+	switch(mType)
+	{
+	case TypeValue_Undefined:		result = "<undefined>";						break;
+	case TypeValue_Integer:			result = "<integer>";						break;
+	case TypeValue_Float:			result = "<float>";							break;
+	case TypeValue_Bool:			result = "<boolean>";						break;
+	case TypeValue_DataRef:		result = "<" + mDataName + ">";			break;
+	case TypeValue_DataRefList:	result = "<List of " + mDataName + ">";	break;
+	}
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -46,13 +67,13 @@ bool Type::operator == (const Type& type) const
 {
 	if (mType != type.mType) return false;
 
-	if ((mType != TypeValue_TableRef) &&
-		(mType != TypeValue_TableRefList))
+	if ((mType != TypeValue_DataRef) &&
+		(mType != TypeValue_DataRefList))
 	{
 		return true;
 	}
 
-	if (mTableName != type.mTableName) return false;
+	if (mDataName != type.mDataName) return false;
 	return mIsList == type.mIsList;
 }
 

@@ -28,30 +28,30 @@ Project::Project (Compiler& compiler, const string& name, const string& path)
 
 Project::~Project ()
 {
-	// Clean up the tables
-	for (Tables::iterator it = mTables.begin(); it != mTables.end(); ++it)
-	{
-		delete it->second;
-	}
-
 	// Clean up the data definitions
 	for (DataDefs::iterator it = mDataDefs.begin(); it != mDataDefs.end(); ++it)
 	{
 		delete it->second;
 	}
 
-	mTables.clear();
+	// Clean up the tables
+	for (Tables::iterator it = mTables.begin(); it != mTables.end(); ++it)
+	{
+		delete it->second;
+	}
+
 	mDataDefs.clear();
+	mTables.clear();
 }
 
 //-----------------------------------------------------------------------------
 // New functions
 //-----------------------------------------------------------------------------
 
-Table& Project::NewTable (const string& name)
+KTable& Project::NewTable (const string& name)
 {
 	K_ASSERT(!HasTable(name));
-	Table* table = new Table (mCompiler, name);
+	KTable* table = new KTable (mCompiler, name);
 	mTables[name] = table;
 
 	mCompiler.Status("Creating table definition '%s'", name.c_str());
@@ -59,7 +59,7 @@ Table& Project::NewTable (const string& name)
 	return *table;
 }
 
-Data& Project::NewData (const string& name, const Table& table)
+Data& Project::NewData (const string& name, const KTable& table)
 {
 	K_ASSERT(!HasData(name));
 	Data* data = new Data (mCompiler, table, name);
@@ -88,7 +88,7 @@ bool Project::HasData (const string& name) const
 // Get functions
 //-----------------------------------------------------------------------------
 
-Table& Project::GetTable (const string& name)
+KTable& Project::GetTable (const string& name)
 {
 	K_ASSERT(HasTable(name));
 	return *mTables[name];

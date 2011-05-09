@@ -13,7 +13,7 @@
 // Constructor
 //-----------------------------------------------------------------------------
 
-Data::Data (Compiler& compiler, const Table& table, const string& name)
+Data::Data (Compiler& compiler, const KTable& table, const string& name)
 	: mCompiler(compiler)
 	, mTable(table)
 	, mName(name)
@@ -97,6 +97,28 @@ Value Data::GetField (unsigned int entryIndex, unsigned int fieldIndex) const
 	const Entry& entry = mEntries[entryIndex];
 	K_ASSERT(fieldIndex < entry.size());
 	return entry[fieldIndex];
+}
+
+unsigned int Data::GetCurrentFieldIndex () const
+{
+	K_ASSERT(mEntries.size() > 0);
+	const Entry& entry = mEntries[mEntries.size()-1];
+
+	return entry.size();
+}
+
+unsigned int Data::GetEntryRef (const string& name) const
+{
+	EntryMap::const_iterator entry = mEntryMap.find(name);
+	if (entry == mEntryMap.end())
+	{
+		// Not found
+		return (unsigned int)-1;
+	}
+	else
+	{
+		return entry->second;
+	}
 }
 
 //-----------------------------------------------------------------------------

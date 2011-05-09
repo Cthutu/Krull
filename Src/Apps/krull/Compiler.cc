@@ -10,6 +10,7 @@
 #include "Project.h"
 #include "Table.h"
 #include "Data.h"
+#include "Value.h"
 
 #include <fstream>
 #include <iostream>
@@ -190,8 +191,11 @@ bool Compiler::Process(const string& filename)
 			break;
 
 		default:
-			Error(parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
-			errorFound = true;
+			if (token != Token_EOF)
+			{
+				Error(parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
+				errorFound = true;
+			}
 			break;
 		}
 	}
@@ -292,7 +296,7 @@ bool Compiler::ProcessTable (Parser& parser)
 {
 	if (ExpectToken(parser, Token_Name))
 	{
-		Table& table = mProject->NewTable(parser.GetString());
+		KTable& table = mProject->NewTable(parser.GetString());
 
 		if (!ExpectToken(parser, Token_ListOpen))
 		{
@@ -395,14 +399,15 @@ bool Compiler::ProcessData (Parser& parser)
 			{
 				return Error(parser, "Unknown table name '%s'", tableName.c_str());
 			}
-			Data& data = mProject->NewData(dataName, mProject->GetTable(tableName));
+			KTable& table = mProject->GetTable(tableName);
+			Data& data = mProject->NewData(dataName, table);
 
 			if (!ExpectToken(parser, Token_ListOpen)) return false;
 
 			Token token = NextToken(parser);
 			while (token != Token_ListClose)
 			{
-				if (!ProcessEntry(parser)) return false;
+				if (!ProcessEntry(parser, table, data)) return false;
 				token = NextToken(parser);
 			}
 
@@ -421,14 +426,129 @@ bool Compiler::ProcessData (Parser& parser)
 	}
 }
 
-bool Compiler::ProcessEntry (Parser& parser)
+bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 {
-	return false;
+	if (parser.GetToken() == Token_Name)
+	{
+		Data::Status status;
+		if (Data::Data_OK != (status = data.StartEntry(parser.GetString())))
+		{
+			switch(status)
+			{
+			case Data::Data_Error_DuplicateName:
+				return Error(parser, "Data entry has duplicate name");
+			default:
+				K_ASSERT(0);
+				break;
+			}
+			return false;
+		}
+		Status("Processing entry '%s'...", parser.GetString().c_str());
+
+		if (!ExpectToken(parser, Token_ListOpen)) return false;
+
+		Token token = NextToken(parser);
+		while (token != Token_ListClose)
+		{
+			if (!ProcessField(parser, table, data)) return false;
+			token = NextToken(parser);
+		}
+
+		// Check that we have enough data given
+		unsigned int numFieldsInTable = table.GetNumFields();
+		unsigned int numFieldsInData = data.GetCurrentFieldIndex();
+		if (numFieldsInData != numFieldsInTable)
+		{
+			return Error(parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName(), numFieldsInTable);
+		}
+	}
+	return true;
 }
 
-bool Compiler::ProcessField (Parser& parser)
+bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 {
-	return false;
+	Token token = parser.GetToken();
+
+	// Work out the type defined in the table
+	unsigned int fieldIndex = data.GetCurrentFieldIndex();
+	Type currentType = table.GetFieldType(fieldIndex);
+
+	switch(token)
+	{
+	case Token_Integer:
+		if (currentType.GetType() == TypeValue_Integer)
+		{
+			Value intValue (currentType, parser.GetInteger());
+			AddDataField(parser, data, currentType, intValue);
+		}
+		else
+		{
+			return Error(parser, "Integer found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	case Token_Name:
+		if (currentType.GetType() == TypeValue_DataRef)
+		{
+			string name = parser.GetString();
+			Data& lookupData = mProject->GetData(currentType.GetDataName());
+			unsigned int entryRef = lookupData.GetEntryRef(name);
+
+			if (entryRef == (unsigned int)-1)
+			{
+				// We could not find the entry
+				return Error(parser, "Unknown data reference '%s' in data '%s'",
+					name.c_str(), currentType.GetDataName());
+			}
+
+			Value dataRefValue (currentType, lookupData, entryRef);
+			AddDataField(parser, data, currentType, dataRefValue);
+		}
+		else
+		{
+			return Error(parser, "Name found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	case Token_LiteralString:
+		if (currentType.GetType() == TypeValue_String)
+		{
+			string str = parser.GetString();
+			Value strValue = Value(currentType, str);
+			AddDataField(parser, data, currentType, strValue);
+		}
+		else
+		{
+			return Error(parser, "String found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	default:
+		return Error(parser, "Syntax error in data entry definition");
+	}
+
+	return true;
+}
+
+bool Compiler::AddDataField (Parser& parser, Data& data, const Type& type, Value& value)
+{
+	Data::Status status;
+
+	status = data.AddField(type, value);
+	if (Data::Data_OK != status)
+	{
+		switch(status)
+		{
+		case Data::Data_Error_InvalidType:
+			return Error(parser, "Entry parameter %d is an invalid type, expecting %s", data.GetCurrentFieldIndex(), type.ShortDesc().c_str());
+
+		case Data::Data_Error_TooMuchData:
+			return Error(parser, "Too many parameters in data entry, should be only %d", data.GetTable().GetNumFields());
+		}
+	}
+
+	value.Release();
+	return true;
 }
 
 //-----------------------------------------------------------------------------

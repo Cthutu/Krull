@@ -13,8 +13,8 @@ enum TypeValue
 	TypeValue_Float,			// float
 	TypeValue_Bool,				// bool
 	TypeValue_String,			// string
-	TypeValue_TableRef,			// Table
-	TypeValue_TableRefList,		// Table*
+	TypeValue_DataRef,			// Data
+	TypeValue_DataRefList,		// Data*
 };
 
 class Type
@@ -25,10 +25,13 @@ public:
 	// Set methods
 	void		SetType			(TypeValue type);
 	void		SetList			();
-	void		SetTableName	(const string& tableName);
+	void		SetDataName		(const string& dataName);
 
 	// Get methods
+	string		ShortDesc		() const;
 	TypeValue	GetType			() const		{ return mType; }
+	bool		IsList			() const		{ return mIsList; }
+	string		GetDataName		() const		{ return mDataName; }
 
 	// Operators
 	bool		operator ==		(const Type& type) const;
@@ -37,7 +40,7 @@ public:
 private:
 	TypeValue		mType;
 	bool			mIsList;
-	string			mTableName;
+	string			mDataName;
 };
 
 //-----------------------------------------------------------------------------

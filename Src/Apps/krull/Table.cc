@@ -12,7 +12,7 @@
 // Constructor
 //-----------------------------------------------------------------------------
 
-Table::Table (Compiler& compiler, const string& name)
+KTable::KTable (Compiler& compiler, const string& name)
 	: mCompiler(compiler)
 	, mName(name)
 {
@@ -22,7 +22,7 @@ Table::Table (Compiler& compiler, const string& name)
 // Destructor
 //-----------------------------------------------------------------------------
 
-Table::~Table ()
+KTable::~KTable ()
 {
 	mFields.clear();
 }
@@ -31,7 +31,7 @@ Table::~Table ()
 // Field management
 //-----------------------------------------------------------------------------
 
-bool Table::AddField (const string& name, const Type& type)
+bool KTable::AddField (const string& name, const Type& type)
 {
 	if (HasField(name)) return false;
 
@@ -46,12 +46,12 @@ bool Table::AddField (const string& name, const Type& type)
 	return true;
 }
 
-unsigned int Table::NumFields () const
+unsigned int KTable::NumFields () const
 {
 	return mFields.size();
 }
 
-bool Table::HasField (const string& name)
+bool KTable::HasField (const string& name)
 {
 	for (Fields::iterator it = mFields.begin(); it != mFields.end(); ++it)
 	{
@@ -61,13 +61,13 @@ bool Table::HasField (const string& name)
 	return false;
 }
 
-const string& Table::GetFieldName (unsigned int index) const
+const string& KTable::GetFieldName (unsigned int index) const
 {
 	K_ASSERT(index < mFields.size());
 	return mFields[index].name;
 }
 
-const Type& Table::GetFieldType (unsigned int index) const
+const Type& KTable::GetFieldType (unsigned int index) const
 {
 	K_ASSERT(index < mFields.size());
 	return mFields[index].type;
