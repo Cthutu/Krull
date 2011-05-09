@@ -61,5 +61,17 @@ bool Table::HasField (const string& name)
 	return false;
 }
 
+const string& Table::GetFieldName (unsigned int index) const
+{
+	K_ASSERT(index < mFields.size());
+	return mFields[index].name;
+}
+
+const Type& Table::GetFieldType (unsigned int index) const
+{
+	K_ASSERT(index < mFields.size());
+	return mFields[index].type;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

@@ -39,4 +39,27 @@ void Type::SetTableName(const string& tableName)
 }
 
 //-----------------------------------------------------------------------------
+// Operators
+//-----------------------------------------------------------------------------
+
+bool Type::operator == (const Type& type) const
+{
+	if (mType != type.mType) return false;
+
+	if ((mType != TypeValue_TableRef) &&
+		(mType != TypeValue_TableRefList))
+	{
+		return true;
+	}
+
+	if (mTableName != type.mTableName) return false;
+	return mIsList == type.mIsList;
+}
+
+bool Type::operator != (const Type& type) const
+{
+	return !(*this == type);
+}
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

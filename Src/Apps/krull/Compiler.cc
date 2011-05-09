@@ -8,6 +8,8 @@
 #include "Compiler.h"
 #include "Filename.h"
 #include "Project.h"
+#include "Table.h"
+#include "Data.h"
 
 #include <fstream>
 #include <iostream>
@@ -183,6 +185,10 @@ bool Compiler::Process(const string& filename)
 			if (!ProcessTable(parser)) errorFound = true;
 			break;
 
+		case Token_Data:
+			if (!ProcessData(parser)) errorFound = true;
+			break;
+
 		default:
 			Error(parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
 			errorFound = true;
@@ -218,8 +224,8 @@ bool Compiler::ExpectToken (Parser& parser, Token token)
 
 	if (nextToken != token)
 	{
-		return Error(parser, "Syntax error, %s expected but '%s' found", Parser::ShortDesc(token),
-			parser.ShortDesc());
+		return Error(parser, "Syntax error, '%s' expected but '%s' found", Parser::ShortDesc(token).c_str(),
+			parser.ShortDesc().c_str());
 	}
 
 	return true;
@@ -354,6 +360,75 @@ bool Compiler::ProcessTable (Parser& parser)
 		Info("Table definition has no name");
 		return false;
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Data clause
+// Syntax:
+//		data <name> : <table name> ( <entry>* )
+//
+// <entry>:
+//		<name> ( <data>* )
+//
+// <data>:
+//		<integer> ||
+//		<float> ||
+//		"<literal string>" ||
+//		true || false ||
+//		<name>
+//		( <data>* )
+//
+//-----------------------------------------------------------------------------
+
+bool Compiler::ProcessData (Parser& parser)
+{
+	if (ExpectToken(parser, Token_Name))
+	{
+		string dataName = parser.GetString();
+
+		if (!ExpectToken(parser, Token_Colon)) return false;
+
+		if (ExpectToken(parser, Token_Name))
+		{
+			string tableName = parser.GetString();
+			if (!mProject->HasTable(tableName))
+			{
+				return Error(parser, "Unknown table name '%s'", tableName.c_str());
+			}
+			Data& data = mProject->NewData(dataName, mProject->GetTable(tableName));
+
+			if (!ExpectToken(parser, Token_ListOpen)) return false;
+
+			Token token = NextToken(parser);
+			while (token != Token_ListClose)
+			{
+				if (!ProcessEntry(parser)) return false;
+				token = NextToken(parser);
+			}
+
+			return true;
+		}
+		else
+		{
+			Info("Data definition has no table type");
+			return false;
+		}
+	}
+	else
+	{
+		Info("Data definition has no name");
+		return false;
+	}
+}
+
+bool Compiler::ProcessEntry (Parser& parser)
+{
+	return false;
+}
+
+bool Compiler::ProcessField (Parser& parser)
+{
+	return false;
 }
 
 //-----------------------------------------------------------------------------

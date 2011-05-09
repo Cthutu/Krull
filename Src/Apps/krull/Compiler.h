@@ -40,6 +40,9 @@ protected:
 	// Phrase compilation
 	bool				ProcessUses			(Parser& parser);
 	bool				ProcessTable		(Parser& parser);
+	bool				ProcessData			(Parser& parser);
+	bool				ProcessEntry		(Parser& parser);
+	bool				ProcessField		(Parser& parser);
 
 protected:
 	bool				mDebugParser;

@@ -504,7 +504,9 @@ string Parser::ShortDesc (Token token)
 	default:
 		if (IsOperator(token))
 		{
-			result = gOps[token - TOKEN_OPERATORS - 1];
+			char op [] = "*";
+			op[0] = gOps[token - TOKEN_OPERATORS - 1];
+			result = op;
 		}
 		else if (IsKeyword(token))
 		{

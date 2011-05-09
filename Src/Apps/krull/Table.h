@@ -19,6 +19,9 @@ public:
 	bool			AddField		(const string& name, const Type& type);
 	unsigned int	NumFields		() const;
 	bool			HasField		(const string& name);
+	unsigned int	GetNumFields	() const		{ return mFields.size(); }
+	const string&	GetFieldName	(unsigned int index) const;
+	const Type&		GetFieldType	(unsigned int index) const;
 
 	string			GetName			() const		{ return mName; }
 

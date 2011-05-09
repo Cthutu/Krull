@@ -236,6 +236,14 @@
 				Name="Model"
 				>
 				<File
+					RelativePath="..\..\..\Src\Apps\krull\Data.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Data.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Src\Apps\krull\Project.cc"
 					>
 				</File>
@@ -257,6 +265,14 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Src\Apps\krull\Type.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Value.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\Value.h"
 					>
 				</File>
 			</Filter>
