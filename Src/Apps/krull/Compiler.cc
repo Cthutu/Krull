@@ -351,20 +351,33 @@ bool Compiler::ProcessTable (Parser& parser)
 					return Error(parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc().c_str());
 				}
 
-				// Expect field name
-				token = NextToken(parser);
-				if (Token_Name == token)
+				// Expect field name or *
+				for(;;)
 				{
-					fieldName = parser.GetString();
-
-					if (!table.AddField(fieldName, fieldType))
+					token = NextToken(parser);
+					if (Token_Name == token)
 					{
-						return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc());
+						fieldName = parser.GetString();
+
+						if (!table.AddField(fieldName, fieldType))
+						{
+							return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc());
+						}
+
+						break;
 					}
-				}
-				else
-				{
-					return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc().c_str());
+					else if (Token_Star == token)
+					{
+						if (fieldType.GetType() != TypeValue_DataRef)
+						{
+							return Error(parser, "Can only have list of data entries, found attempt to have list of %s", fieldType.ShortDesc());
+						}
+						fieldType.SetList();
+					}
+					else
+					{
+						return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc().c_str());
+					}
 				}
 			}
 		}
