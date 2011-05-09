@@ -49,15 +49,15 @@ Parser::~Parser ()
 
 void Parser::Start (const string& fileName, const char* buffer, unsigned size)
 {
-	ParseState ps;
-	ps.Init(fileName, buffer,size);
+	ParseState* ps = new ParseState();
+	ps->Init(fileName, buffer,size);
 	mParseStack.push_back(ps);
 }
 
 void Parser::End ()
 {
-	ParseState& ps = GetState();
-	delete [] ps.mBuffer;
+	ParseState* ps = GetState();
+	delete [] ps->mBuffer;
 	mParseStack.erase(mParseStack.begin() + mParseStack.size() - 1);
 }
 
@@ -68,18 +68,18 @@ void Parser::End ()
 char Parser::NextChar()
 {
 	char ch;
-	ParseState& ps = GetState();
+	ParseState* ps = GetState();
 
-	ps.mLastScan = ps.mScan;
-	ps.mLastLine = ps.mLine;
+	ps->mLastScan = ps->mScan;
+	ps->mLastLine = ps->mLine;
 
 	// Check for end of file
-	if (ps.mScan == ps.mEnd)
+	if (ps->mScan == ps->mEnd)
 	{
 		return 0;
 	}
 
-	ch = *ps.mScan++;
+	ch = *ps->mScan++;
 
 	// Check for end of line:
 	//		Windows:	\r\n
@@ -89,13 +89,13 @@ char Parser::NextChar()
 	// Whichever version, only return \n
 	if ((ch == '\r') || (ch == '\n'))
 	{
-		++ps.mLine;
+		++ps->mLine;
 		if (ch == '\r')
 		{
 			// Check for possible following \n and skip it
-			if ((ps.mScan != ps.mEnd) && (*ps.mScan == '\n'))
+			if ((ps->mScan != ps->mEnd) && (*ps->mScan == '\n'))
 			{
-				++ps.mScan;
+				++ps->mScan;
 			}
 
 			ch = '\n';
@@ -107,9 +107,9 @@ char Parser::NextChar()
 
 void Parser::UngetChar()
 {
-	ParseState& ps = GetState();
-	ps.mScan = ps.mLastScan;
-	ps.mLine = ps.mLastLine;
+	ParseState* ps = GetState();
+	ps->mScan = ps->mLastScan;
+	ps->mLine = ps->mLastLine;
 }
 
 //-----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ static const char* gOps = "().:*";
 Token Parser::Next ()
 {
 	char ch;
-	ParseState& ps = GetState();
+	ParseState* ps = GetState();
 
 	for(;;)
 	{
@@ -199,7 +199,7 @@ Token Parser::Next ()
 		}
 	}
 
-	mTokenStart = ps.mScan - 1;
+	mTokenStart = ps->mScan - 1;
 
 	//-----------------------------------------------------------------------------
 	// Integer
@@ -227,7 +227,7 @@ Token Parser::Next ()
 		}
 
 		UngetChar();
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_Integer);
 	}
 
@@ -247,7 +247,7 @@ Token Parser::Next ()
 			ch = NextChar();
 		}
 		UngetChar();
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
 
 		// Determine if this is a keyword or not
@@ -278,7 +278,7 @@ Token Parser::Next ()
 
 	else if (ch == '"')
 	{
-		mTokenStart = ps.mScan;
+		mTokenStart = ps->mScan;
 		do
 		{
 			ch = NextChar();
@@ -292,11 +292,11 @@ Token Parser::Next ()
 			{
 				UngetChar();
 			}
-			mTokenEnd = ps.mScan;
+			mTokenEnd = ps->mScan;
 			return (mToken = Token_ERROR_UnterminatedString);
 		}
 
-		mTokenEnd = ps.mScan - 1;		// Ignore the trailing quote
+		mTokenEnd = ps->mScan - 1;		// Ignore the trailing quote
 		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
 		return (mToken = Token_LiteralString);
 	}
@@ -307,27 +307,27 @@ Token Parser::Next ()
 	
 	else if (ch == '.')
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_Dot);
 	}
 	else if (ch == '(')
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_ListOpen);
 	}
 	else if (ch == ')')
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_ListClose);
 	}
 	else if (ch == ':')
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_Colon);
 	}
 	else if (ch == '*')
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_Star);
 	}
 
@@ -337,7 +337,7 @@ Token Parser::Next ()
 
 	else
 	{
-		mTokenEnd = ps.mScan;
+		mTokenEnd = ps->mScan;
 		return (mToken = Token_ERROR_InvalidChar);
 	}
 }

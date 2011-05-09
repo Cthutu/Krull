@@ -335,8 +335,20 @@ bool Compiler::ProcessTable (Parser& parser)
 				case Token_Int:			fieldType.SetType(TypeValue_Integer);			break;
 				case Token_Float:		fieldType.SetType(TypeValue_Float);				break;
 				case Token_Bool:		fieldType.SetType(TypeValue_Bool);				break;
+				case Token_Name:
+					{
+						fieldType.SetType(TypeValue_DataRef);
+						string dataName = parser.GetString();
+						if (!mProject->HasData(dataName))
+						{
+							return Error(parser, "Unknown data definition '%s'", dataName.c_str());
+						}
+						fieldType.SetDataName(dataName);
+					}
+					break;
+										
 				default:
-					return Error(parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc());
+					return Error(parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc().c_str());
 				}
 
 				// Expect field name
@@ -352,7 +364,7 @@ bool Compiler::ProcessTable (Parser& parser)
 				}
 				else
 				{
-					return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc());
+					return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc().c_str());
 				}
 			}
 		}

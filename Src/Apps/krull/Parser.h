@@ -69,8 +69,8 @@ public:
 
 	// Attributes
 	Token				GetToken	() const				{ return mToken; }
-	string				GetFileName	() const				{ return GetState().mFileName; }
-	unsigned int		GetLine		() const				{ return GetState().mLine; }
+	string				GetFileName	() const				{ return GetState()->mFileName; }
+	unsigned int		GetLine		() const				{ return GetState()->mLine; }
 	string				GetString	() const				{ return string(mTokenStart, mTokenEnd); }
 	int					GetInteger	() const				{ return mInteger; }
 
@@ -87,8 +87,8 @@ protected:
 	void				UngetChar	();
 
 	struct ParseState;
-	ParseState&			GetState	()						{ return mParseStack[mParseStack.size()-1]; }
-	const ParseState&	GetState	() const				{ return mParseStack[mParseStack.size()-1]; }
+	ParseState*			GetState	()						{ return mParseStack[mParseStack.size() - 1]; }
+	const ParseState*	GetState	() const				{ return mParseStack[mParseStack.size() - 1]; }
 
 private:
 	struct ParseState
@@ -118,5 +118,5 @@ private:
 	unsigned int	mHash;
 	int				mInteger;
 
-	vector<ParseState>	mParseStack;
+	vector<ParseState*>	mParseStack;
 };
