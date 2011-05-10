@@ -1,16 +1,16 @@
 # Faction data
 
-uses Class
+uses Race
 
 table Faction
 (
 	string			name				# Human-readable string
-	PlayerClasses*	allowedClasses
+	PlayerRaces*	allowedRaces
 )
 
 data Faction: Faction
 (
 	# Player factions
-	Free		("Free"		(Warrior Mage)			)
-	Foul		("Foul"		(Warrior Mage)			)
+	Free		("Free"		(Human)			)
+	Foul		("Foul"		(Orc)			)
 )
