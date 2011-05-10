@@ -16,7 +16,7 @@ public:
 	virtual ~SqliteBackEnd ();
 
 	virtual string		GetExtension		() const		{ return string("kx"); }
-	virtual bool		Build				(const string& fileName, const Project& project);
+	virtual bool		Build				(const string& fileName, const Compiler& compiler, const Project& project);
 
 private:
 

@@ -11,6 +11,7 @@
 #include "Table.h"
 #include "Data.h"
 #include "Value.h"
+#include "BackEnd.h"
 
 #include <fstream>
 #include <iostream>
@@ -151,7 +152,7 @@ void Compiler::Info (const char* msg, ...)
 // Main entry point for compiler
 //-----------------------------------------------------------------------------
 
-bool Compiler::Process(const string& filename)
+bool Compiler::Process(const string& filename, BackEnd& backEnd)
 {
 	// Parse the buffer
 	Parser parser;
@@ -206,7 +207,9 @@ bool Compiler::Process(const string& filename)
 	//
 	if (!errorFound)
 	{
-
+		string outName = FileName::ReplaceExtension(filename, backEnd.GetExtension());
+		Status("[SQLITE]  Building '%s'", outName.c_str());
+		errorFound = backEnd.Build(outName, *this, *mProject);
 	}
 
 	//
@@ -215,8 +218,11 @@ bool Compiler::Process(const string& filename)
 	delete mProject;
 	mProject = 0;
 
-	Status("[COMPILE] Finished compiling '%s'", filename.c_str());
-	return true;
+	Status(errorFound
+		? "[COMPILE] Finished compiling '%s'"
+		: "[COMPILE] Error while compiling '%s'"
+		, filename.c_str());
+	return errorFound;
 }
 
 //-----------------------------------------------------------------------------

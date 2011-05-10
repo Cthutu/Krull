@@ -17,6 +17,7 @@ namespace FileName
 	string		ExtractPath				(const string& normalisedFileName);
 	string		ExtractExtension		(const string& fileName);
 	string		ExtractRootName			(const string& fileName);
+	string		ReplaceExtension		(const string& fileName, const string& extension);
 	
 	//-----------------------------------------------------------------------------
 	// Attributes

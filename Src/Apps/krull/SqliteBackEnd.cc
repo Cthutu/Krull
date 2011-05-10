@@ -31,7 +31,7 @@ SqliteBackEnd::~SqliteBackEnd ()
 // Builder
 //-----------------------------------------------------------------------------
 
-bool SqliteBackEnd::Build (const string& fileName, const Project& project)
+bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, const Project& project)
 {
 	return true;
 }

@@ -7,6 +7,7 @@
 #pragma once
 
 class Project;
+class Compiler;
 
 class BackEnd
 {
@@ -15,7 +16,7 @@ public:
 	virtual ~BackEnd () {}
 
 	virtual string	GetExtension		() const		= 0;
-	virtual bool	Build				(const string& fileName, const Project& project) = 0;
+	virtual bool	Build				(const string& fileName, const Compiler& compiler, const Project& project) = 0;
 };
 
 //-----------------------------------------------------------------------------

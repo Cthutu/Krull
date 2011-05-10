@@ -13,6 +13,7 @@ class KTable;
 class Data;
 class Type;
 class Value;
+class BackEnd;
 
 class Compiler
 {
@@ -20,7 +21,7 @@ public:
 	Compiler ();
 	~Compiler ();
 
-	bool				Process				(const string& filename);
+	bool				Process				(const string& filename, BackEnd& backEnd);
 
 	// State methods
 	void				DebugParserOn		();

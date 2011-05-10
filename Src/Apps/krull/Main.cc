@@ -11,6 +11,7 @@
 #include "Krull.h"
 #include "Compiler.h"
 #include "Filename.h"
+#include "SqliteBackEnd.h"
 
 #if K_WIN32
 #	include <crtdbg.h>
@@ -142,6 +143,7 @@ int Start (int argc, char** argv)
 		}
 	}
 
+	// Initialise the compiler
 	Compiler compiler;
 	if (inputInfo.debugParser)
 	{
@@ -152,12 +154,18 @@ int Start (int argc, char** argv)
 		compiler.VerboseOn();
 	}
 
+	// Choose the back-end
+	BackEnd* backEnd = 0;
+	backEnd = new SqliteBackEnd();
+
 	for (vector<string>::const_iterator it = inputInfo.fileNames.begin();
 		 it != inputInfo.fileNames.end();
 		 ++it)
 	{
-		compiler.Process(*it);
+		compiler.Process(*it, *backEnd);
 	}
+
+	delete backEnd;
 
 	K_DEBUG_PAUSE();
 	return 0;

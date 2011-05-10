@@ -74,6 +74,29 @@ namespace FileName
 		return fileName.substr(start, i - start);
 	}
 
+	string ReplaceExtension (const string& fileName, const string& extension)
+	{
+		unsigned len = fileName.length();
+		unsigned i;
+
+		for (i = len; i > 0; --i)
+		{
+			if (fileName[i-1] == '.') break;
+		}
+		string result;
+		if (0 == i)
+		{
+			result = fileName + ".";
+		}
+		else
+		{
+			result = fileName.substr(0, i);
+		}
+
+		result += extension;
+		return result;
+	}
+
 	bool IsFullPath (const string& fileName)
 	{
 		return (fileName.length() > 2) && (fileName[1] == ':');
