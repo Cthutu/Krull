@@ -6,8 +6,8 @@
 
 #pragma once
 
-class Project;
-class Compiler;
+#include "Project.h"
+#include "Compiler.h"
 
 class BackEnd
 {

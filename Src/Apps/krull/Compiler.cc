@@ -60,7 +60,7 @@ bool Compiler::OpenFile (const string& filename, Parser& parser)
 	f.open(fullName.c_str(), ios::in | ios::binary);
 	if (!f)
 	{
-		Error(parser, "Cannot open '%s'", fullName.c_str());
+		Error(&parser, "Cannot open '%s'", fullName.c_str());
 		return false;
 	}
 	f.seekg(0, ios::end);
@@ -81,18 +81,25 @@ bool Compiler::OpenFile (const string& filename, Parser& parser)
 // Error handling
 //-----------------------------------------------------------------------------
 
-bool Compiler::ErrorArgs (const Parser& parser, const char* errMsg, va_list args)
+bool Compiler::ErrorArgs (const Parser* parser, const char* errMsg, va_list args) const
 {
 	char errorBuffer [1024];
 	_vsnprintf_s(errorBuffer, 1024, errMsg, args);
 
-	cerr << parser.GetFileName() << " (" << parser.GetLine() << "): ";
+	if (parser)
+	{
+		cerr << parser->GetFileName() << " (" << parser->GetLine() << "): ";
+	}
+	else
+	{
+		cerr << "Error: ";
+	}
 	cerr << errorBuffer << endl;
 
 	return false;
 }
 
-bool Compiler::Error (const Parser& parser, const char* errMsg, ...)
+bool Compiler::Error (const Parser* parser, const char* errMsg, ...) const
 {
 	va_list args;
 	va_start(args, errMsg);
@@ -106,7 +113,7 @@ bool Compiler::Error (const Parser& parser, const char* errMsg, ...)
 // Only switched on if mVerbose is true
 //-----------------------------------------------------------------------------
 
-void Compiler::StatusArgs (const char* msg, va_list args)
+void Compiler::StatusArgs (const char* msg, va_list args) const
 {
 	if (mVerbose)
 	{
@@ -117,7 +124,7 @@ void Compiler::StatusArgs (const char* msg, va_list args)
 	}
 }
 
-void Compiler::Status (const char* msg, ...)
+void Compiler::Status (const char* msg, ...) const
 {
 	if (mVerbose)
 	{
@@ -132,7 +139,7 @@ void Compiler::Status (const char* msg, ...)
 // Info messages
 //-----------------------------------------------------------------------------
 
-void Compiler::InfoArgs (const char* msg, va_list args)
+void Compiler::InfoArgs (const char* msg, va_list args) const
 {
 	char msgBuffer [1024];
 	_vsnprintf_s(msgBuffer, 1024, msg, args);
@@ -140,7 +147,7 @@ void Compiler::InfoArgs (const char* msg, va_list args)
 	cout << "Info: " << msgBuffer << endl;
 }
 
-void Compiler::Info (const char* msg, ...)
+void Compiler::Info (const char* msg, ...) const
 {
 	va_list args;
 	va_start(args, msg);
@@ -194,7 +201,7 @@ bool Compiler::Process(const string& filename, BackEnd& backEnd)
 		default:
 			if (token != Token_EOF)
 			{
-				Error(parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
+				Error(&parser, "Syntax error, '%s' found", parser.ShortDesc().c_str());
 				errorFound = true;
 			}
 			break;
@@ -235,7 +242,7 @@ bool Compiler::ExpectToken (Parser& parser, Token token)
 
 	if (nextToken != token)
 	{
-		return Error(parser, "Syntax error, '%s' expected but '%s' found", Parser::ShortDesc(token).c_str(),
+		return Error(&parser, "Syntax error, '%s' expected but '%s' found", Parser::ShortDesc(token).c_str(),
 			parser.ShortDesc().c_str());
 	}
 
@@ -279,7 +286,7 @@ bool Compiler::ProcessUses (Parser& parser)
 	}
 	else
 	{
-		return Error(parser, "Invalid uses syntax, '%s' found", parser.ShortDesc().c_str());
+		return Error(&parser, "Invalid uses syntax, '%s' found", parser.ShortDesc().c_str());
 	}
 
 	if (!FileName::IsFullPath(usesFileName))
@@ -317,7 +324,7 @@ bool Compiler::ProcessTable (Parser& parser)
 			{
 				if (table.NumFields() == 0)
 				{
-					return Error(parser, "Table '%s' has no fields", table.GetName());
+					return Error(&parser, "Table '%s' has no fields", table.GetName());
 				}
 				
 				// Table definition complete
@@ -348,14 +355,14 @@ bool Compiler::ProcessTable (Parser& parser)
 						string dataName = parser.GetString();
 						if (!mProject->HasData(dataName))
 						{
-							return Error(parser, "Unknown data definition '%s'", dataName.c_str());
+							return Error(&parser, "Unknown data definition '%s'", dataName.c_str());
 						}
 						fieldType.SetDataName(dataName);
 					}
 					break;
 										
 				default:
-					return Error(parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc().c_str());
+					return Error(&parser, "Syntax error, field type expected, found '%s'", parser.ShortDesc().c_str());
 				}
 
 				// Expect field name or *
@@ -368,7 +375,7 @@ bool Compiler::ProcessTable (Parser& parser)
 
 						if (!table.AddField(fieldName, fieldType))
 						{
-							return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc().c_str());
+							return Error(&parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc().c_str());
 						}
 
 						break;
@@ -377,13 +384,13 @@ bool Compiler::ProcessTable (Parser& parser)
 					{
 						if (fieldType.GetType() != TypeValue_DataRef)
 						{
-							return Error(parser, "Can only have list of data entries, found attempt to have list of %s", fieldType.ShortDesc().c_str());
+							return Error(&parser, "Can only have list of data entries, found attempt to have list of %s", fieldType.ShortDesc().c_str());
 						}
 						fieldType.SetList();
 					}
 					else
 					{
-						return Error(parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc().c_str());
+						return Error(&parser, "Syntax error, field name expected, found '%s'", parser.ShortDesc().c_str());
 					}
 				}
 			}
@@ -429,7 +436,7 @@ bool Compiler::ProcessData (Parser& parser)
 			string tableName = parser.GetString();
 			if (!mProject->HasTable(tableName))
 			{
-				return Error(parser, "Unknown table name '%s'", tableName.c_str());
+				return Error(&parser, "Unknown table name '%s'", tableName.c_str());
 			}
 			KTable& table = mProject->GetTable(tableName);
 			Data& data = mProject->NewData(dataName, table);
@@ -468,7 +475,7 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 			switch(status)
 			{
 			case Data::Data_Error_DuplicateName:
-				return Error(parser, "Data entry has duplicate name");
+				return Error(&parser, "Data entry has duplicate name");
 			default:
 				K_ASSERT(0);
 				break;
@@ -491,7 +498,7 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 		unsigned int numFieldsInData = data.GetCurrentFieldIndex();
 		if (numFieldsInData != numFieldsInTable)
 		{
-			return Error(parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName(), numFieldsInTable);
+			return Error(&parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName(), numFieldsInTable);
 		}
 	}
 	return true;
@@ -515,7 +522,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		}
 		else
 		{
-			return Error(parser, "Integer found, expected %s", currentType.ShortDesc().c_str());
+			return Error(&parser, "Integer found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 
@@ -529,7 +536,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 			if (entryRef == (unsigned int)-1)
 			{
 				// We could not find the entry
-				return Error(parser, "Unknown data reference '%s' in data '%s'",
+				return Error(&parser, "Unknown data reference '%s' in data '%s'",
 					name.c_str(), currentType.GetDataName().c_str());
 			}
 
@@ -538,7 +545,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		}
 		else
 		{
-			return Error(parser, "Name found, expected %s", currentType.ShortDesc().c_str());
+			return Error(&parser, "Name found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 
@@ -551,7 +558,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		}
 		else
 		{
-			return Error(parser, "String found, expected %s", currentType.ShortDesc().c_str());
+			return Error(&parser, "String found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 
@@ -574,7 +581,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 					if (entryRef == (unsigned int)-1)
 					{
 						// We could not find the entry
-						return Error(parser, "Unknown data reference '%s' in data '%s'",
+						return Error(&parser, "Unknown data reference '%s' in data '%s'",
 							name.c_str(), currentType.GetDataName().c_str());
 					}
 
@@ -583,7 +590,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 				}
 				else
 				{
-					return Error(parser, "Syntax error, expecting data reference name or ')', found '%s'", parser.ShortDesc());
+					return Error(&parser, "Syntax error, expecting data reference name or ')', found '%s'", parser.ShortDesc());
 				}
 				token = NextToken(parser);
 			}
@@ -592,12 +599,12 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		}
 		else
 		{
-			return Error(parser, "Data reference list found, expected %s", currentType.ShortDesc().c_str());
+			return Error(&parser, "Data reference list found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 
 	default:
-		return Error(parser, "Syntax error in data entry definition");
+		return Error(&parser, "Syntax error in data entry definition");
 	}
 
 	return true;
@@ -613,10 +620,10 @@ bool Compiler::AddDataField (Parser& parser, Data& data, const Type& type, Value
 		switch(status)
 		{
 		case Data::Data_Error_InvalidType:
-			return Error(parser, "Entry parameter %d is an invalid type, expecting %s", data.GetCurrentFieldIndex(), type.ShortDesc().c_str());
+			return Error(&parser, "Entry parameter %d is an invalid type, expecting %s", data.GetCurrentFieldIndex(), type.ShortDesc().c_str());
 
 		case Data::Data_Error_TooMuchData:
-			return Error(parser, "Too many parameters in data entry, should be only %d", data.GetTable().GetNumFields());
+			return Error(&parser, "Too many parameters in data entry, should be only %d", data.GetTable().GetNumFields());
 		}
 	}
 

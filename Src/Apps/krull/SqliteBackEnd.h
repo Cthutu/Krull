@@ -6,6 +6,11 @@
 
 #pragma once
 
+extern "C"
+{
+	struct sqlite3;
+};
+
 #include "BackEnd.h"
 
 class SqliteBackEnd
@@ -19,7 +24,7 @@ public:
 	virtual bool		Build				(const string& fileName, const Compiler& compiler, const Project& project);
 
 private:
-
+	sqlite3*			mSqlite;
 };
 
 //-----------------------------------------------------------------------------

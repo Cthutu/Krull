@@ -28,15 +28,15 @@ public:
 	void				VerboseOn			();
 
 	// Status messages - used by other classes (e.g. Project)
-	void				StatusArgs			(const char* msg, va_list args);
-	void				Status				(const char* msg, ...);
+	bool				ErrorArgs			(const Parser* parser, const char* errMsg, va_list args) const;
+	bool				Error				(const Parser* parser, const char* errMsg, ...) const;
+	void				InfoArgs			(const char* msg, va_list args) const;
+	void				Info				(const char* msg, ...) const;
+	void				StatusArgs			(const char* msg, va_list args) const;
+	void				Status				(const char* msg, ...) const;
 
 protected:
 	bool				OpenFile			(const string& filename, Parser& parser);
-	bool				ErrorArgs			(const Parser& parser, const char* errMsg, va_list args);
-	bool				Error				(const Parser& parser, const char* errMsg, ...);
-	void				InfoArgs			(const char* msg, va_list args);
-	void				Info				(const char* msg, ...);
 
 	// Compilation utilities
 	bool				ExpectToken			(Parser& parser, Token token);
