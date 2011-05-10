@@ -53,7 +53,6 @@ Value::Value (const Type& type, const Data& data)
 
 Value::~Value ()
 {
-	K_ASSERT(mData.mInteger == 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -108,11 +107,6 @@ void Value::Clean (const Type& type)
 		K_ASSERT(0);
 		break;
 	}
-}
-
-void Value::Release ()
-{
-	mData.mInteger = 0;
 }
 
 //-----------------------------------------------------------------------------

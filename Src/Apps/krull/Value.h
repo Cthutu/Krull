@@ -33,7 +33,6 @@ public:
 	// a Data instance, Release() should be called.  This will not deallocate
 	// any memory but will avoid the Value destructor from failing an assertion.
 	void			Clean				(const Type& type);						// Deallocate memory usage
-	void			Release				();
 
 private:
 	union Values

@@ -583,7 +583,6 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 			}
 
 			AddDataField(parser, data, currentType, value);
-			value.Clean(currentType);
 		}
 		else
 		{
@@ -615,7 +614,6 @@ bool Compiler::AddDataField (Parser& parser, Data& data, const Type& type, Value
 		}
 	}
 
-	value.Release();
 	return true;
 }
 
