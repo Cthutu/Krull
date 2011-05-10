@@ -276,6 +276,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Backends"
+				>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\BackEnd.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\SqliteBackEnd.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\Apps\krull\SqliteBackEnd.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Tests"
