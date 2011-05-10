@@ -29,6 +29,9 @@ public:
 
 protected:
 	bool				Execute				(const string& sql);
+	string				FromInt				(int value) const;
+	string				FromUInt			(unsigned int value) const;
+	string				FromFloat			(float value) const;
 
 private:
 	sqlite3*			mSqlite;

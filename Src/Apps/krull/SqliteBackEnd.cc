@@ -14,6 +14,8 @@ extern "C"
 #include "Filename.h"
 #include "Value.h"
 
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
@@ -64,6 +66,24 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 			//-----------------------------------------------------------------------------
 			// Create table (and sub-tables)
+			//
+			// SQL code to create a table:
+			//
+			//		CREATE TABLE main.<table name>
+			//		(
+			//			krull_id		INTEGER PRIMARY KEY ASC,
+			//			<field name>	<field type>
+			//			...
+			//		);
+			//
+			// SQL code to create a sub table:
+			//
+			//		CREATE TABLE main.`<field name>@<table name>`
+			//		(
+			//			id				INTEGER,
+			//			ref				INTEGER
+			//		);
+			//
 			//-----------------------------------------------------------------------------
 			
 			sql = "CREATE TABLE main.";
@@ -93,6 +113,19 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				if (!buildResult) break;
 
 				sql += ", " + fieldName + " " + sqlType;
+
+				//
+				// Handle sub-tables
+				//
+				if (fieldType.GetType() == TypeValue_DataRefList)
+				{
+					string sqlSubTable = "CREATE TABLE main.`";
+					sqlSubTable += fieldName;
+					sqlSubTable += "@";
+					sqlSubTable += table.GetName();
+					sqlSubTable += "` ( id INTEGER, ref INTEGER ) ;";
+					Execute(sqlSubTable);
+				}
 			}
 
 			sql += ");";
@@ -101,9 +134,29 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 			//-----------------------------------------------------------------------------
 			// Insert the data rows
+			//
+			// SQL code for inserting rows:
+			//
+			//		BEGIN TRANSACTION;
+			//		INSERT INTO main.<table name>
+			//		(
+			//			<field name>,
+			//			...
+			//		)
+			//		VALUES
+			//		(
+			//			<value>,
+			//			...
+			//		);
+			//		...
+			//		...
+			//		END TRANSACTION;
+			//
 			//-----------------------------------------------------------------------------
 
-			Execute("BEGIN TRANSACTION ;");
+			//Execute("BEGIN TRANSACTION ;");
+
+			string sqlSubTable;
 
 			for (unsigned int row = 0; row < data->GetNumEntries(); ++row)
 			{
@@ -141,9 +194,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 					{
 					case TypeValue_Integer:
 						{
-							char number [32];
-							sprintf_s(number, "%d", value.GetInteger());
-							sql += number;
+							sql += FromInt(value.GetInteger());
 						}
 						break;
 
@@ -155,9 +206,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 					case TypeValue_Float:
 						{
-							char number [64];
-							sprintf_s(number, "%g", value.GetFloat());
-							sql += number;
+							sql += FromFloat(value.GetFloat());
 						}
 						break;
 
@@ -171,15 +220,32 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 					case TypeValue_DataRef:
 						{
-							char number [32];
-							sprintf_s(number, "%d", value.GetDataRef()+1);
-							sql += number;
+							sql += FromUInt(value.GetDataRef()+1);
 						}
 						break;
 
 					case TypeValue_DataRefList:
 						{
-							sql += "0";
+							vector<unsigned int>& refs = value.GetDataRefList();
+
+							for (unsigned i = 0; i < refs.size(); ++i)
+							{
+								string sqlSubTable = "INSERT INTO main.`";
+								sqlSubTable += table.GetFieldName(field);
+								sqlSubTable += "@";
+								sqlSubTable += table.GetName();
+								sqlSubTable += "` (`id`, `ref`) VALUES ( ";
+								sqlSubTable += FromUInt(row+1);
+								sqlSubTable += ", ";
+								sqlSubTable += FromUInt(refs[i]+1);
+								sqlSubTable += " ) ;";
+
+								buildResult = Execute(sqlSubTable);
+								if (!buildResult) break;
+							}
+
+ 							sql += FromUInt(row+1);
+
 						}
 						break;
 
@@ -194,7 +260,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				Execute(sql);
 			}
 
-			Execute("END TRANSACTION ;");
+			//Execute("END TRANSACTION ;");
 		}
 	}
 
@@ -203,7 +269,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 	if (!buildResult)
 	{
-		FileName::Delete(fileName);
+		//FileName::Delete(fileName);
 	}
 
 	return buildResult;
@@ -217,20 +283,58 @@ bool SqliteBackEnd::Execute (const string& sql)
 {
 	sqlite3_stmt* dbCode = 0;
 	int result = sqlite3_prepare_v2(mSqlite, sql.c_str(), sql.length(), &dbCode, 0);
+
+	bool buildResult = true;
+
 	if (result)
 	{
-		K_ASSERT(0);
-		return false;
+		cerr << "SQL ERROR: " << sqlite3_errmsg(mSqlite) << endl;
+		buildResult = false;
 	}
-	while ((result = sqlite3_step(dbCode)) != SQLITE_DONE)
+	else
 	{
-		K_ASSERT(0);
-		return false;
+		while ((result = sqlite3_step(dbCode)) != SQLITE_DONE)
+		{
+			cerr << "SQL ERROR: " << sqlite3_errmsg(mSqlite) << endl;
+			buildResult = false;
+			break;
+		}
 	}
 
 	sqlite3_finalize(dbCode);
-	return true;
+	if (!buildResult)
+	{
+		cerr << "SQL: " << sql << endl << endl;
+	}
+	return buildResult;
 }
+
+//-----------------------------------------------------------------------------
+// Numeric conversions
+//-----------------------------------------------------------------------------
+
+string SqliteBackEnd::FromInt (int value) const
+{
+	char number [32];
+	sprintf_s(number, 32, "%d", value);
+	return number;
+}
+
+string SqliteBackEnd::FromUInt (unsigned int value) const
+{
+	char number [32];
+	sprintf_s(number, 32, "%u", value);
+	return number;
+}
+
+string SqliteBackEnd::FromFloat (float value) const
+{
+	char number [64];
+	sprintf_s(number, 32, "%g", value);
+	return number;
+}
+
+
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
