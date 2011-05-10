@@ -171,7 +171,9 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 					case TypeValue_DataRef:
 						{
-							sql += "0";
+							char number [32];
+							sprintf_s(number, "%d", value.GetDataRef()+1);
+							sql += number;
 						}
 						break;
 

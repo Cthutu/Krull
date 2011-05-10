@@ -1,8 +1,19 @@
 # Test file
 
-table names
+table category
 (
 	string name
+)
+
+data category: category
+(
+	FirstBorn	(	"First born"	)
+	SecBorn		(	"Second born"	)
+)
+
+table names
+(
+	string		name
 )
 
 data names: names
@@ -17,12 +28,13 @@ data names: names
 
 table test
 (
-	names* names
+	names*		names
+	category	cat
 )
 
 data test: test
 (
-	Matt ( (Matt James Davies) )
-	Kieron ( (Kieron John Anthony Davies) )
+	Matt ( (Matt James Davies) FirstBorn )
+	Kieron ( (Kieron John Anthony Davies) SecBorn )
 )
 
