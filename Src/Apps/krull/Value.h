@@ -24,15 +24,20 @@ public:
 	Value (const Type& type, const Data& data);							// For a Data*
 	~Value ();
 
-	void			AddDataRef			(unsigned int ref);						// For a Data*
-	unsigned int	NumDataRefs			() const;
+	void					AddDataRef			(unsigned int ref);						// For a Data*
+	unsigned int			NumDataRefs			() const;
 
 	// Clean up.  Data instances will end up owning Values and as such will
-	// call Clean() to deallocate any used memory.  However, creation of
-	// Values will be outside the Data class and when ownership is passed to
-	// a Data instance, Release() should be called.  This will not deallocate
-	// any memory but will avoid the Value destructor from failing an assertion.
-	void			Clean				(const Type& type);						// Deallocate memory usage
+	// call Clean() to deallocate any used memory.
+	void					Clean				(const Type& type);						// Deallocate memory usage
+
+	// Get functions
+	int						GetInteger			() const		{ return mData.mInteger; }
+	float					GetFloat			() const		{ return mData.mFloat;}
+	bool					GetBool				() const		{ return mData.mBoolean; }
+	const string&			GetString			() const		{ return *mData.mString; }
+	unsigned int			GetDataRef			() const		{ return mData.mDataRef; }
+	vector<unsigned int>&	GetDataRefList		() const		{ return *mData.mDataRefList; }
 
 private:
 	union Values
@@ -41,8 +46,8 @@ private:
 		float					mFloat;				// For 'float' definitions
 		bool					mBoolean;			// For 'bool' definitions
 		string*					mString;			// For 'string' definitions
-		unsigned int			mTableRef;			// For 'Table' definitions
-		vector<unsigned int>*	mTableRefList;		// For 'Table*' definitions
+		unsigned int			mDataRef;			// For 'Table' definitions
+		vector<unsigned int>*	mDataRefList;		// For 'Table*' definitions
 	};
 
 	Values			mData;

@@ -41,14 +41,14 @@ Value::Value (const Type& type, const Data& data, unsigned int ref)
 {
 	K_ASSERT(type.GetType() == TypeValue_DataRef);
 	(void)data;
-	mData.mTableRef = ref;
+	mData.mDataRef = ref;
 }
 
 Value::Value (const Type& type, const Data& data)
 {
 	K_ASSERT(type.GetType() == TypeValue_DataRefList);
 	(void)data;
-	mData.mTableRefList = new vector<unsigned int>();
+	mData.mDataRefList = new vector<unsigned int>();
 }
 
 Value::~Value ()
@@ -64,14 +64,14 @@ void Value::AddDataRef (unsigned int ref)
 	// We assume that the data holds a pointer to a vector of table references.
 	// We have no way to protect against this as type information is not stored
 	// with the data to save memory.  The calling code should do due diligence.
-	K_ASSERT(mData.mTableRefList != 0);
-	mData.mTableRefList->push_back(ref);
+	K_ASSERT(mData.mDataRefList != 0);
+	mData.mDataRefList->push_back(ref);
 }
 
 unsigned int Value::NumDataRefs () const
 {
-	K_ASSERT(mData.mTableRefList != 0);
-	return mData.mTableRefList->size();
+	K_ASSERT(mData.mDataRefList != 0);
+	return mData.mDataRefList->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -98,8 +98,8 @@ void Value::Clean (const Type& type)
 		break;
 
 	case TypeValue_DataRefList:
-		delete mData.mTableRefList;
-		mData.mTableRefList = 0;
+		delete mData.mDataRefList;
+		mData.mDataRefList = 0;
 		break;
 
 	default:

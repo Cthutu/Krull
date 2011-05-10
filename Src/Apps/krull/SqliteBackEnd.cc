@@ -12,6 +12,7 @@ extern "C"
 };
 #include "Data.h"
 #include "Filename.h"
+#include "Value.h"
 
 //-----------------------------------------------------------------------------
 // Constructor
@@ -59,13 +60,18 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 		for (const Data* data = project.FirstData(); data != 0; data = project.NextData())
 		{
 			string sql;
+			const KTable& table = data->GetTable();
 
+			//-----------------------------------------------------------------------------
+			// Create table (and sub-tables)
+			//-----------------------------------------------------------------------------
+			
 			sql = "CREATE TABLE main.";
-			sql += data->GetTable().GetName();
+			sql += table.GetName();
 			sql += " ( krull_id INTEGER PRIMARY KEY ASC";
 
 			// Cycle through all the columns
-			const KTable& table = data->GetTable();
+
 			for (unsigned int i = 0; i < table.GetNumFields(); ++i)
 			{
 				string fieldName = table.GetFieldName(i);
@@ -91,34 +97,137 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 			sql += ");";
 
-			sqlite3_stmt* dbCode = 0;
-			result = sqlite3_prepare_v2(mSqlite, sql.c_str(), sql.length(), &dbCode, 0);
-			K_ASSERT(result == 0);
+			Execute(sql);
 
-			while((result = sqlite3_step(dbCode)) != SQLITE_DONE)
+			//-----------------------------------------------------------------------------
+			// Insert the data rows
+			//-----------------------------------------------------------------------------
+
+			Execute("BEGIN TRANSACTION ;");
+
+			for (unsigned int row = 0; row < data->GetNumEntries(); ++row)
 			{
-				K_ASSERT(0);
+				sql = "INSERT INTO main.";
+				sql += table.GetName();
+
+				//
+				// Column names
+				//
+				sql += "( ";
+				for (unsigned field = 0; field < table.GetNumFields(); ++field)
+				{
+					if (field != 0)
+					{
+						sql += ", ";
+					}
+					sql += table.GetFieldName(field);
+				}
+
+				//
+				// Values
+				//
+				sql += " ) VALUES (";
+
+				for (unsigned field = 0; field < table.GetNumFields(); ++field)
+				{
+					Value value = data->GetField(row, field);
+
+					if (field != 0)
+					{
+						sql += ", ";
+					}
+
+					switch(table.GetFieldType(field).GetType())
+					{
+					case TypeValue_Integer:
+						{
+							char number [32];
+							sprintf_s(number, "%d", value.GetInteger());
+							sql += number;
+						}
+						break;
+
+					case TypeValue_Bool:
+						{
+							sql += value.GetBool() ? "1" : "0";
+						}
+						break;
+
+					case TypeValue_Float:
+						{
+							char number [64];
+							sprintf_s(number, "%g", value.GetFloat());
+							sql += number;
+						}
+						break;
+
+					case TypeValue_String:
+						{
+							sql += "\"";
+							sql += value.GetString();
+							sql += "\"";
+						}
+						break;
+
+					case TypeValue_DataRef:
+						{
+							sql += "0";
+						}
+						break;
+
+					case TypeValue_DataRefList:
+						{
+							sql += "0";
+						}
+						break;
+
+					default:
+						buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers");
+					}
+
+					if (!buildResult) break;
+				}
+
+				sql += " ) ;";
+				Execute(sql);
 			}
 
-			sqlite3_finalize(dbCode);
+			Execute("END TRANSACTION ;");
 		}
 	}
 
 	// Clean up
 	sqlite3_close(mSqlite);
 
+	if (!buildResult)
+	{
+		FileName::Delete(fileName);
+	}
+
 	return buildResult;
 }
 
 //-----------------------------------------------------------------------------
-// Table generation
+// SQL execution
 //-----------------------------------------------------------------------------
 
-bool SqliteBackEnd::GenerateTable (const Compiler& compiler, const Project& project, const Data& data)
+bool SqliteBackEnd::Execute (const string& sql)
 {
-	bool buildResult = true;
+	sqlite3_stmt* dbCode = 0;
+	int result = sqlite3_prepare_v2(mSqlite, sql.c_str(), sql.length(), &dbCode, 0);
+	if (result)
+	{
+		K_ASSERT(0);
+		return false;
+	}
+	while ((result = sqlite3_step(dbCode)) != SQLITE_DONE)
+	{
+		K_ASSERT(0);
+		return false;
+	}
 
-	return buildResult;
+	sqlite3_finalize(dbCode);
+	return true;
 }
 
 //-----------------------------------------------------------------------------

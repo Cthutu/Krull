@@ -28,7 +28,7 @@ public:
 	virtual bool		Build				(const string& fileName, const Compiler& compiler, const Project& project);
 
 protected:
-	bool				GenerateTable		(const Compiler& compiler, const Project& project, const Data& data);
+	bool				Execute				(const string& sql);
 
 private:
 	sqlite3*			mSqlite;
