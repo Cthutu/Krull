@@ -58,6 +58,7 @@ void Parser::End ()
 {
 	ParseState* ps = GetState();
 	delete [] ps->mBuffer;
+	delete ps;
 	mParseStack.erase(mParseStack.begin() + mParseStack.size() - 1);
 }
 
