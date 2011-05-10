@@ -331,6 +331,48 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 			//Execute("END TRANSACTION ;");
 		}
+
+		//-----------------------------------------------------------------------------
+		// Generate type information for all the tables
+		//
+		// SQL code for main type information table:
+		//
+		//		CREATE TABLE main.`@@type`
+		//		(
+		//			id			INTEGER PRIMARY KEY ASC,
+		//			dataName	TEXT,
+		//			tableName	TEXT
+		//		);
+		//
+		// SQL code for add rows to main type information table:
+		//
+		//		INSERT INTO main.`@@type`
+		//		(
+		//			dataName,
+		//			tableName,
+		//		)
+		//		VALUES
+		//		(
+		//			"<data name>",
+		//			"<table name>"
+		//		);
+		//
+		//-----------------------------------------------------------------------------
+
+		Execute("CREATE TABLE main.`@@type` (id INTEGER PRIMARY KEY ASC, dataName TEXT, tableName TEXT);");
+
+		for (const Data* data = project.FirstData(); data != 0; data = project.NextData())
+		{
+			string sql = "INSERT INTO main.`@@type` ( dataName, tableName ) VALUES ( \"";
+			sql += data->GetName();
+			sql += "\", \"";
+			sql += data->GetTable().GetName();
+			sql += "\" );";
+
+			Execute(sql);
+		}
+
+		//-----------------------------------------------------------------------------
 	}
 
 	// Clean up
