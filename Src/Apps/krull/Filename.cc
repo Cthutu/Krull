@@ -102,6 +102,16 @@ namespace FileName
 		return (fileName.length() > 2) && (fileName[1] == ':');
 	}
 
+	bool Delete (const string& fileName)
+	{
+		HRESULT hr = S_OK;
+		if (!DeleteFileA(fileName.c_str()))
+		{
+			hr = GetLastError();
+		}
+		return (hr == S_OK) || (hr == ERROR_FILE_NOT_FOUND);			// ERROR CODE 2: Cannot find the file specified
+	}
+
 	//-----------------------------------------------------------------------------
 	// Unknown platform
 	//-----------------------------------------------------------------------------

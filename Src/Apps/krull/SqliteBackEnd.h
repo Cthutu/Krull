@@ -13,6 +13,10 @@ extern "C"
 
 #include "BackEnd.h"
 
+class Data;
+
+
+
 class SqliteBackEnd
 	: public BackEnd
 {
@@ -22,6 +26,9 @@ public:
 
 	virtual string		GetExtension		() const		{ return string("kx"); }
 	virtual bool		Build				(const string& fileName, const Compiler& compiler, const Project& project);
+
+protected:
+	bool				GenerateTable		(const Compiler& compiler, const Project& project, const Data& data);
 
 private:
 	sqlite3*			mSqlite;

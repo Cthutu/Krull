@@ -139,7 +139,7 @@ int Start (int argc, char** argv)
 		}
 		else
 		{
-			inputInfo.fileNames.insert(inputInfo.fileNames.end(), argv[i]);
+			inputInfo.fileNames.push_back(FileName::NormaliseFileName(argv[i]));
 		}
 	}
 

@@ -101,4 +101,23 @@ Data& Project::GetData (const string& name)
 }
 
 //-----------------------------------------------------------------------------
+// Iteration functions
+//-----------------------------------------------------------------------------
+
+const Data* Project::FirstData () const
+{
+	mDataIt = mDataDefs.begin();
+	return NextData();
+}
+
+const Data* Project::NextData () const
+{
+	if (mDataIt == mDataDefs.end()) return 0;
+	Data* data = mDataIt->second;
+	++mDataIt;
+
+	return data;
+}
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

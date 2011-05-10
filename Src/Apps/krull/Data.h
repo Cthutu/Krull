@@ -6,10 +6,10 @@
 
 #pragma once
 
+#include "Table.h"
+
 class Compiler;
-class KTable;
 class Value;
-class Type;
 
 class Data
 {

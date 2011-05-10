@@ -22,27 +22,33 @@ public:
 	~Project ();
 
 	// New functions
-	KTable&		NewTable		(const string& name);
-	Data&		NewData			(const string& name, const KTable& table);
+	KTable&			NewTable		(const string& name);
+	Data&			NewData			(const string& name, const KTable& table);
 
 	// Has functions
-	bool		HasTable		(const string& name) const;
-	bool		HasData			(const string& name) const;
+	bool			HasTable		(const string& name) const;
+	bool			HasData			(const string& name) const;
 
 	// Get functions
-	KTable&		GetTable		(const string& name);
-	Data&		GetData			(const string& name);
+	KTable&			GetTable		(const string& name);
+	Data&			GetData			(const string& name);
+
+	// Iteration functions
+	const Data*		FirstData		() const;
+	const Data*		NextData		() const;
 
 private:
-	Compiler&	mCompiler;
-	string		mPath;
-	string		mName;
+	Compiler&			mCompiler;
+	string				mPath;
+	string				mName;
 
-	typedef		map<string, KTable*>		Tables;
+	typedef		map<string, KTable*>	Tables;
 	typedef		map<string, Data*>		DataDefs;
 
-	Tables		mTables;
-	DataDefs	mDataDefs;
+	Tables				mTables;
+	DataDefs			mDataDefs;
+
+	mutable DataDefs::const_iterator	mDataIt;
 };
 
 //-----------------------------------------------------------------------------
