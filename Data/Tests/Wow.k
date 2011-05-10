@@ -5,16 +5,14 @@
 table EquipType
 (
 	string			name
-	bool			b
-	float			f
 )
 
 data EquipType: EquipType
 (
-	Weapon			( "Weapon" true)
-	Relic			( "Relic" true)
-	Ranged			( "Ranged" false)
-	Wand			( "Wand" false)
+	Weapon			( "Weapon" )
+	Relic			( "Relic" )
+	Ranged			( "Ranged" )
+	Wand			( "Wand" )
 )
 
 table EquipCategory

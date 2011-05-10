@@ -297,30 +297,6 @@
 			Name="Tests"
 			>
 			<File
-				RelativePath="..\..\..\Data\Tests\Class.k"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Data\Tests\Core.k"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Data\Tests\Faction.k"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Data\Tests\Gender.k"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Data\Tests\Race.k"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Data\Tests\Test.k"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\Data\Tests\Wow.k"
 				>
 			</File>
