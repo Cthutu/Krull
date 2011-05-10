@@ -313,7 +313,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Data\Tests\Race.k"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Data\Tests\Test.k"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Data\Tests\Wow.k"
 				>
 			</File>
 		</Filter>

@@ -121,14 +121,14 @@ static const unsigned int gKeyWordHashes [] =
 {
 	/* 0 */		0,
 	/* 1 */		0,
-	/* 2 */		0,
+	/* 2 */		Token_True,
 	/* 3 */		Token_Table,
 	/* 4 */		Token_String,
 	/* 5 */		0,
-	/* 6 */		0,
+	/* 6 */		(Token_Int << 8) + Token_Float,
 	/* 7 */		0,
 	/* 8 */		0,
-	/* 9 */		0,
+	/* 9 */		Token_Bool,
 	/* A */		0,
 	/* B */		Token_Data,
 	/* C */		0,
@@ -148,6 +148,8 @@ static const char* gKeywords [kNumKeyWords + 1] =
 	"3int",
 	"5float",
 	"4bool",
+	"4true",
+	"5false",
 };
 
 // Must be the same order as the KparserToken enum definition
@@ -214,7 +216,6 @@ Token Parser::Next ()
 		mInteger = 0;
 		while ((ch >= '0') && (ch <= '9'))
 		{
-			ch = NextChar();
 			t *= 10;
 			t += (ch - '0');
 			if (t < mInteger)
@@ -225,6 +226,7 @@ Token Parser::Next ()
 				return (mToken = Token_ERROR_Overflow);
 			}
 			mInteger = t;
+			ch = NextChar();
 		}
 
 		UngetChar();
@@ -398,6 +400,11 @@ void Parser::Describe() const
 {
 	char* buffer = 0;
 
+	if (mToken < 0)
+	{
+		printf("ERROR");
+	}
+
 	if (mToken != Token_EOF)
 	{
 		printf("Krull: Parser: ");
@@ -408,12 +415,8 @@ void Parser::Describe() const
 
 		printf("Token found [%s]: ", buffer);
 	}
-
-	if (mToken < 0)
-	{
-		printf("ERROR");
-	}
-	else if (mToken == Token_EOF)
+	
+	if (mToken == Token_EOF)
 	{
 		printf("End of file");
 	}

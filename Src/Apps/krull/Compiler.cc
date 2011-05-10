@@ -216,7 +216,7 @@ bool Compiler::Process(const string& filename, BackEnd& backEnd)
 	{
 		string outName = FileName::ReplaceExtension(filename, backEnd.GetExtension());
 		Status("[SQLITE]  Building '%s'", outName.c_str());
-		errorFound = backEnd.Build(outName, *this, *mProject);
+		errorFound = !backEnd.Build(outName, *this, *mProject);
 	}
 
 	//
@@ -226,8 +226,8 @@ bool Compiler::Process(const string& filename, BackEnd& backEnd)
 	mProject = 0;
 
 	Status(errorFound
-		? "[COMPILE] Finished compiling '%s'"
-		: "[COMPILE] Error while compiling '%s'"
+		? "[COMPILE] Error while compiling '%s'"
+		: "[COMPILE] Finished compiling '%s'"
 		, filename.c_str());
 	return errorFound;
 }
@@ -242,7 +242,7 @@ bool Compiler::ExpectToken (Parser& parser, Token token)
 
 	if (nextToken != token)
 	{
-		return Error(&parser, "Syntax error, '%s' expected but '%s' found", Parser::ShortDesc(token).c_str(),
+		return Error(&parser, "Syntax error, expected '%s' but found '%s'", Parser::ShortDesc(token).c_str(),
 			parser.ShortDesc().c_str());
 	}
 
@@ -498,7 +498,7 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 		unsigned int numFieldsInData = data.GetCurrentFieldIndex();
 		if (numFieldsInData != numFieldsInTable)
 		{
-			return Error(&parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName(), numFieldsInTable);
+			return Error(&parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName().c_str(), numFieldsInTable);
 		}
 	}
 	return true;
@@ -559,6 +559,30 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		else
 		{
 			return Error(&parser, "String found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	case Token_True:
+		if (currentType.GetType() == TypeValue_Bool)
+		{
+			Value boolValue = Value(currentType, true);
+			AddDataField(parser, data, currentType, boolValue);
+		}
+		else
+		{
+			return Error(&parser, "Boolean found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	case Token_False:
+		if (currentType.GetType() == TypeValue_Bool)
+		{
+			Value boolValue = Value(currentType, false);
+			AddDataField(parser, data, currentType, boolValue);
+		}
+		else
+		{
+			return Error(&parser, "Boolean found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 

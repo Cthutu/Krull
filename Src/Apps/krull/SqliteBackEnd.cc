@@ -58,6 +58,8 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 	}
 	else
 	{
+		Execute("BEGIN TRANSACTION ;");
+
 		// Generate tables
 		for (const KTable* table = project.FirstTable(); table != 0; table = project.NextTable())
 		{
@@ -195,7 +197,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 					string sqlSubTable = "CREATE TABLE main.`";
 					sqlSubTable += fieldName;
 					sqlSubTable += "@";
-					sqlSubTable += table.GetName();
+					sqlSubTable += data->GetName();
 					sqlSubTable += "` ( id INTEGER, ref INTEGER ) ;";
 					Execute(sqlSubTable);
 				}
@@ -302,7 +304,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 								string sqlSubTable = "INSERT INTO main.`";
 								sqlSubTable += table.GetFieldName(field);
 								sqlSubTable += "@";
-								sqlSubTable += table.GetName();
+								sqlSubTable += data->GetName();
 								sqlSubTable += "` (`id`, `ref`) VALUES ( ";
 								sqlSubTable += FromUInt(row+1);
 								sqlSubTable += ", ";
@@ -374,6 +376,8 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 		//-----------------------------------------------------------------------------
 	}
+
+	Execute("END TRANSACTION ;");
 
 	// Clean up
 	sqlite3_close(mSqlite);
