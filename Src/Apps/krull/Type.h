@@ -30,7 +30,7 @@ public:
 	// Get methods
 	string		ShortDesc		() const;
 	TypeValue	GetType			() const		{ return mType; }
-	bool		IsList			() const		{ return mIsList; }
+	bool		IsList			() const		{ return mType == TypeValue_DataRefList; }
 	string		GetDataName		() const		{ return mDataName; }
 
 	// Operators
@@ -39,7 +39,6 @@ public:
 
 private:
 	TypeValue		mType;
-	bool			mIsList;
 	string			mDataName;
 };
 

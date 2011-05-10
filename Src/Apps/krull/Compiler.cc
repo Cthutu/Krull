@@ -52,7 +52,7 @@ bool Compiler::OpenFile (const string& filename, Parser& parser)
 	}
 
 	// Verbose message
-	Status("Compiling %s...", fullName.c_str());
+	Status("[COMPILE] Compiling %s...", fullName.c_str());
 
 	// Load file
 	fstream f;
@@ -164,7 +164,7 @@ bool Compiler::Process(const string& filename)
 
 	// Initialise the project
 	string projectName = FileName::ExtractRootName(filename);
-	Status("Initialising project '%s'", projectName.c_str());
+	Status("[PROJECT] Initialising project '%s'", projectName.c_str());
 	mProject = new Project (*this, projectName, FileName::ExtractPath(filename));
 
 	Token token;
@@ -215,6 +215,7 @@ bool Compiler::Process(const string& filename)
 	delete mProject;
 	mProject = 0;
 
+	Status("[COMPILE] Finished compiling '%s'", filename.c_str());
 	return true;
 }
 
@@ -361,7 +362,7 @@ bool Compiler::ProcessTable (Parser& parser)
 
 						if (!table.AddField(fieldName, fieldType))
 						{
-							return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc());
+							return Error(parser, "Duplicate field found.  There are more than one field called '%s'", parser.ShortDesc().c_str());
 						}
 
 						break;
@@ -370,7 +371,7 @@ bool Compiler::ProcessTable (Parser& parser)
 					{
 						if (fieldType.GetType() != TypeValue_DataRef)
 						{
-							return Error(parser, "Can only have list of data entries, found attempt to have list of %s", fieldType.ShortDesc());
+							return Error(parser, "Can only have list of data entries, found attempt to have list of %s", fieldType.ShortDesc().c_str());
 						}
 						fieldType.SetList();
 					}
@@ -468,7 +469,7 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 			}
 			return false;
 		}
-		Status("Processing entry '%s'...", parser.GetString().c_str());
+		Status("[DATA]    Processing entry '%s'...", parser.GetString().c_str());
 
 		if (!ExpectToken(parser, Token_ListOpen)) return false;
 
@@ -523,7 +524,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 			{
 				// We could not find the entry
 				return Error(parser, "Unknown data reference '%s' in data '%s'",
-					name.c_str(), currentType.GetDataName());
+					name.c_str(), currentType.GetDataName().c_str());
 			}
 
 			Value dataRefValue (currentType, lookupData, entryRef);
@@ -545,6 +546,48 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		else
 		{
 			return Error(parser, "String found, expected %s", currentType.ShortDesc().c_str());
+		}
+		break;
+
+	case Token_ListOpen:
+		if (currentType.GetType() == TypeValue_DataRefList)
+		{
+			// Process a list of data references
+			Data& lookupData = mProject->GetData(currentType.GetDataName());
+			Value value (currentType, lookupData);
+
+			Token token = NextToken(parser);
+			while (token != Token_ListClose)
+			{
+				if (Token_Name == token)
+				{
+					// This is a data reference.  Look it up and confirm it is valid
+					string name = parser.GetString();
+					unsigned int entryRef = lookupData.GetEntryRef(name);
+
+					if (entryRef == (unsigned int)-1)
+					{
+						// We could not find the entry
+						return Error(parser, "Unknown data reference '%s' in data '%s'",
+							name.c_str(), currentType.GetDataName().c_str());
+					}
+
+					// Add the entry reference to the list
+					value.AddDataRef(entryRef);
+				}
+				else
+				{
+					return Error(parser, "Syntax error, expecting data reference name or ')', found '%s'", parser.ShortDesc());
+				}
+				token = NextToken(parser);
+			}
+
+			AddDataField(parser, data, currentType, value);
+			value.Clean(currentType);
+		}
+		else
+		{
+			return Error(parser, "Data reference list found, expected %s", currentType.ShortDesc().c_str());
 		}
 		break;
 

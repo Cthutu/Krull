@@ -13,7 +13,6 @@
 
 Type::Type ()
 : mType(TypeValue_Undefined)
-, mIsList(false)
 {}
 
 //-----------------------------------------------------------------------------
@@ -28,8 +27,8 @@ void Type::SetType (TypeValue type)
 
 void Type::SetList ()
 {
-	K_ASSERT(mType != TypeValue_Undefined);
-	mIsList = true;
+	K_ASSERT(mType == TypeValue_DataRef);
+	mType = TypeValue_DataRefList;
 }
 
 void Type::SetDataName(const string& dataName)
@@ -52,8 +51,9 @@ string Type::ShortDesc () const
 	case TypeValue_Integer:			result = "<integer>";						break;
 	case TypeValue_Float:			result = "<float>";							break;
 	case TypeValue_Bool:			result = "<boolean>";						break;
-	case TypeValue_DataRef:		result = "<" + mDataName + ">";			break;
-	case TypeValue_DataRefList:	result = "<List of " + mDataName + ">";	break;
+	case TypeValue_String:			result = "<string>";						break;
+	case TypeValue_DataRef:			result = "<" + mDataName + ">";				break;
+	case TypeValue_DataRefList:		result = "<List of " + mDataName + ">";		break;
 	}
 
 	return result;
@@ -73,8 +73,7 @@ bool Type::operator == (const Type& type) const
 		return true;
 	}
 
-	if (mDataName != type.mDataName) return false;
-	return mIsList == type.mIsList;
+	return (mDataName == type.mDataName);
 }
 
 bool Type::operator != (const Type& type) const

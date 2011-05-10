@@ -54,7 +54,7 @@ KTable& Project::NewTable (const string& name)
 	KTable* table = new KTable (mCompiler, name);
 	mTables[name] = table;
 
-	mCompiler.Status("Creating table definition '%s'", name.c_str());
+	mCompiler.Status("[TABLE]   Creating table definition '%s'", name.c_str());
 
 	return *table;
 }
@@ -65,7 +65,7 @@ Data& Project::NewData (const string& name, const KTable& table)
 	Data* data = new Data (mCompiler, table, name);
 	mDataDefs[name] = data;
 
-	mCompiler.Status("Creating data definition '%s' [%s]", name.c_str(), table.GetName().c_str());
+	mCompiler.Status("[DATA]    Creating data definition '%s' [%s]", name.c_str(), table.GetName().c_str());
 
 	return *data;
 }

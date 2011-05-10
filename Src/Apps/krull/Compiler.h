@@ -42,11 +42,11 @@ protected:
 	Token				NextToken			(Parser& parser);
 
 	// Phrase compilation
-	bool				ProcessUses			(Parser& parser);
-	bool				ProcessTable		(Parser& parser);
-	bool				ProcessData			(Parser& parser);
-	bool				ProcessEntry		(Parser& parser, const KTable& table, Data& data);
-	bool				ProcessField		(Parser& parser, const KTable& table, Data& data);
+	bool				ProcessUses			(Parser& parser);														// Process: uses ...
+	bool				ProcessTable		(Parser& parser);														// Process: table <name> ( ... )
+	bool				ProcessData			(Parser& parser);														// Process: data <name>: <name> ( ... )
+	bool				ProcessEntry		(Parser& parser, const KTable& table, Data& data);						// Process: <name> ( ... ) within a data clause
+	bool				ProcessField		(Parser& parser, const KTable& table, Data& data);						// Process: <value> within an data entry clause
 	bool				AddDataField		(Parser& parser, Data& data, const Type& type, Value& value);
 
 protected:

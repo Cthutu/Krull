@@ -41,7 +41,7 @@ bool KTable::AddField (const string& name, const Type& type)
 
 	mFields.push_back(field);
 
-	mCompiler.Status("Adding field '%s' to table '%s'", name.c_str(), mName.c_str());
+	mCompiler.Status("[TABLE]   Adding field '%s' to table '%s'", name.c_str(), mName.c_str());
 
 	return true;
 }
