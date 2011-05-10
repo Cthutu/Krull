@@ -119,5 +119,20 @@ const Data* Project::NextData () const
 	return data;
 }
 
+const KTable* Project::FirstTable () const
+{
+	mTableIt = mTables.begin();
+	return NextTable();
+}
+
+const KTable* Project::NextTable () const
+{
+	if (mTableIt == mTables.end()) return 0;
+	KTable* table = mTableIt->second;
+	++mTableIt;
+
+	return table;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

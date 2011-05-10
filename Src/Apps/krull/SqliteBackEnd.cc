@@ -59,6 +59,79 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 	else
 	{
 		// Generate tables
+		for (const KTable* table = project.FirstTable(); table != 0; table = project.NextTable())
+		{
+			string sql;
+
+			//-----------------------------------------------------------------------------
+			// Generate type information for the tables
+			//
+			// SQL code to create a meta-table:
+			//
+			//		CREATE TABLE main.`@<table name>`
+			//		(
+			//			id		INTEGER PRIMARY KEY ASC,
+			//			name	TEXT,
+			//			type	TEXT
+			//		);
+			//
+			// SQL code to insert an entry:
+			//
+			//		INSERT INTO main.`@<table name>`
+			//		(
+			//			name,
+			//			type
+			//		)
+			//		VALUES
+			//		(
+			//			<field name>,
+			//			<field type>
+			//		);
+			//
+			//-----------------------------------------------------------------------------
+
+			sql = "CREATE TABLE main.`@";
+			sql += table->GetName();
+			sql += "` ( id INTEGER PRIMARY KEY ASC, name TEXT, type TEXT ) ;";
+			Execute(sql);
+
+			for (unsigned int i = 0; i < table->GetNumFields(); ++i)
+			{
+				sql = "INSERT INTO main.`@";
+				sql += table->GetName();
+				sql += "` (name, type) VALUES ( \"";
+
+				string name = table->GetFieldName(i);
+				Type type = table->GetFieldType(i);
+				string ref;
+				
+				sql += name;
+				sql += "\", \"";
+
+				switch(type.GetType())
+				{
+				case TypeValue_Integer:		sql += "integer";			break;
+				case TypeValue_Float:		sql += "float";				break;
+				case TypeValue_Bool:		sql += "boolean";			break;
+				case TypeValue_String:		sql += "string";			break;
+				case TypeValue_DataRef:		sql += "ref ";
+											sql += type.GetDataName();	break;
+				case TypeValue_DataRefList:	sql += "list ";
+											sql += type.GetDataName();	break;
+				default:
+					buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers");
+				}
+
+				if (!buildResult) break;
+
+				sql += "\" ) ;";
+
+				Execute(sql);
+			}
+
+			if (!buildResult) break;
+		}
+
 		for (const Data* data = project.FirstData(); data != 0; data = project.NextData())
 		{
 			string sql;
@@ -87,7 +160,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//-----------------------------------------------------------------------------
 			
 			sql = "CREATE TABLE main.";
-			sql += table.GetName();
+			sql += data->GetName();
 			sql += " ( krull_id INTEGER PRIMARY KEY ASC";
 
 			// Cycle through all the columns
@@ -137,7 +210,6 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//
 			// SQL code for inserting rows:
 			//
-			//		BEGIN TRANSACTION;
 			//		INSERT INTO main.<table name>
 			//		(
 			//			<field name>,
@@ -148,9 +220,6 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//			<value>,
 			//			...
 			//		);
-			//		...
-			//		...
-			//		END TRANSACTION;
 			//
 			//-----------------------------------------------------------------------------
 
@@ -161,7 +230,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			for (unsigned int row = 0; row < data->GetNumEntries(); ++row)
 			{
 				sql = "INSERT INTO main.";
-				sql += table.GetName();
+				sql += data->GetName();
 
 				//
 				// Column names

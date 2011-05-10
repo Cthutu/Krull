@@ -36,6 +36,8 @@ public:
 	// Iteration functions
 	const Data*		FirstData		() const;
 	const Data*		NextData		() const;
+	const KTable*	FirstTable		() const;
+	const KTable*	NextTable		() const;
 
 private:
 	Compiler&			mCompiler;
@@ -49,6 +51,7 @@ private:
 	DataDefs			mDataDefs;
 
 	mutable DataDefs::const_iterator	mDataIt;
+	mutable Tables::const_iterator		mTableIt;
 };
 
 //-----------------------------------------------------------------------------
