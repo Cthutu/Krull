@@ -121,9 +121,10 @@ namespace FileName
 	
 	static char* realpath2 (const char* path, char* buff)
 	{
-		char* home;
+		char* home = getenv("HOME");
 		
-		if (*path == '~' && (home = getenv("HOME")))
+		
+		if ((*path == '~') && (home != 0))
 		{
 			char buffer [PATH_MAX];
 			return realpath(strcat(strcpy(buffer, home), path+1), buff);

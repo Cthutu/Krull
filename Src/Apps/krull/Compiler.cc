@@ -330,6 +330,9 @@ bool Compiler::ProcessTable (Parser& parser)
 	if (ExpectToken(parser, Token_Name))
 	{
 		KTable& table = mProject->NewTable(parser.GetString());
+		Type rowNameType;
+		rowNameType.SetType(TypeValue_RowName);
+		table.AddField("krull_id", rowNameType);
 
 		if (!ExpectToken(parser, Token_ListOpen))
 		{
@@ -502,7 +505,7 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 			return false;
 		}
 		Status("[DATA]    Processing entry '%s'...", parser.GetString().c_str());
-
+		
 		int entryType = ExpectToken2(parser, Token_ListOpen, Token_Colon);
 		if (!entryType) return false;
 

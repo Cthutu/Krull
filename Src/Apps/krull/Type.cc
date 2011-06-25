@@ -54,6 +54,7 @@ string Type::ShortDesc () const
 	case TypeValue_String:			result = "<string>";						break;
 	case TypeValue_DataRef:			result = "<" + mDataName + ">";				break;
 	case TypeValue_DataRefList:		result = "<List of " + mDataName + ">";		break;
+		case TypeValue_RowName:		result = "<row name>";						break;
 	}
 
 	return result;

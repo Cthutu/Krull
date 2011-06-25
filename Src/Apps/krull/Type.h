@@ -9,6 +9,7 @@
 enum TypeValue
 {
 	TypeValue_Undefined,
+	TypeValue_RowName,			// row name
 	TypeValue_Integer,			// int
 	TypeValue_Float,			// float
 	TypeValue_Bool,				// bool

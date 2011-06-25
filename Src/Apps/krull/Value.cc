@@ -33,7 +33,7 @@ Value::Value (const Type& type, bool b)
 
 Value::Value (const Type& type, const string& s)
 {
-	K_ASSERT(type.GetType() == TypeValue_String);
+	K_ASSERT(type.GetType() == TypeValue_String || type.GetType() == TypeValue_RowName);
 	mData.mString = new string(s);
 }
 

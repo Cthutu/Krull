@@ -54,6 +54,10 @@ Data::Status Data::StartEntry (const string& name)
 
 	mEntries.push_back(newEntry);
 	mEntryMap[name] = newIndex;
+	
+	Type rowNameType;
+	rowNameType.SetType(TypeValue_RowName);
+	AddField(rowNameType, Value(rowNameType, name));
 
 	return Data_OK;
 }
@@ -62,7 +66,7 @@ Data::Status Data::AddField (const Type& type, const Value& value)
 {
 	Entry& latestEntry = mEntries[mEntries.size()-1];
 
-	if (latestEntry.size() >= mTable.GetNumFields())
+	if (latestEntry.size() > mTable.GetNumFields())
 	{
 		return Data_Error_TooMuchData;
 	}

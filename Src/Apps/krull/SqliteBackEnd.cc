@@ -72,7 +72,6 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//
 			//		CREATE TABLE main.`@<table name>`
 			//		(
-			//			id		INTEGER PRIMARY KEY ASC,
 			//			name	TEXT,
 			//			type	TEXT
 			//		);
@@ -94,10 +93,10 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 			sql = "CREATE TABLE main.`@";
 			sql += table->GetName();
-			sql += "` ( id INTEGER PRIMARY KEY ASC, name TEXT, type TEXT ) ;";
+			sql += "` ( name TEXT, type TEXT ) ;";
 			Execute(sql);
 
-			for (unsigned int i = 0; i < table->GetNumFields(); ++i)
+			for (unsigned int i = 1; i < table->GetNumFields(); ++i)
 			{
 				sql = "INSERT INTO main.`@";
 				sql += table->GetName();
@@ -121,7 +120,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				case TypeValue_DataRefList:	sql += "list ";
 											sql += type.GetDataName();	break;
 				default:
-					buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers");
+					buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers [0]");
 				}
 
 				if (!buildResult) break;
@@ -146,7 +145,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//
 			//		CREATE TABLE main.<table name>
 			//		(
-			//			krull_id		INTEGER PRIMARY KEY ASC,
+			//			krull_id		TEXT PRIMARY KEY,
 			//			<field name>	<field type>
 			//			...
 			//		);
@@ -163,11 +162,11 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			
 			sql = "CREATE TABLE main.";
 			sql += data->GetName();
-			sql += " ( krull_id INTEGER PRIMARY KEY ASC";
+			sql += " ( krull_id TEXT PRIMARY KEY";
 
 			// Cycle through all the columns
 
-			for (unsigned int i = 0; i < table.GetNumFields(); ++i)
+			for (unsigned int i = 1; i < table.GetNumFields(); ++i)
 			{
 				string fieldName = table.GetFieldName(i);
 				Type fieldType = table.GetFieldType(i);
@@ -182,7 +181,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				case TypeValue_Float:			sqlType = "REAL";			break;
 				case TypeValue_String:			sqlType = "TEXT";			break;
 				default:
-					buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers");
+					buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers [1]");
 				}
 
 				if (!buildResult) break;
@@ -251,6 +250,9 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				// Values
 				//
 				sql += " ) VALUES (";
+				
+				// Insert row name
+				
 
 				for (unsigned field = 0; field < table.GetNumFields(); ++field)
 				{
@@ -282,6 +284,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 						break;
 
 					case TypeValue_String:
+					case TypeValue_RowName:
 						{
 							sql += "\"";
 							sql += value.GetString();
@@ -321,7 +324,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 						break;
 
 					default:
-						buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers");
+						buildResult = compiler.Error(0, "Invalid type passed to the back-end.  This should never happen, please contact the developers [2]");
 					}
 
 					if (!buildResult) break;
