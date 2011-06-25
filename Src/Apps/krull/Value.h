@@ -20,12 +20,12 @@ public:
 	Value (const Type& type, float f);									// For a float
 	Value (const Type& type, bool b);									// For a bool
 	Value (const Type& type, const string& s);							// For a string
-	Value (const Type& type, const Data& data, unsigned int ref);		// For a Data
+	Value (const Type& type, const Data& data, size_t ref);				// For a Data
 	Value (const Type& type, const Data& data);							// For a Data*
 	~Value ();
 
-	void					AddDataRef			(unsigned int ref);						// For a Data*
-	unsigned int			NumDataRefs			() const;
+	void					AddDataRef			(size_t ref);			// For a Data*
+	size_t					NumDataRefs			() const;
 
 	// Clean up.  Data instances will end up owning Values and as such will
 	// call Clean() to deallocate any used memory.
@@ -36,8 +36,8 @@ public:
 	float					GetFloat			() const		{ return mData.mFloat;}
 	bool					GetBool				() const		{ return mData.mBoolean; }
 	const string&			GetString			() const		{ return *mData.mString; }
-	unsigned int			GetDataRef			() const		{ return mData.mDataRef; }
-	vector<unsigned int>&	GetDataRefList		() const		{ return *mData.mDataRefList; }
+	size_t					GetDataRef			() const		{ return mData.mDataRef; }
+	vector<size_t>&			GetDataRefList		() const		{ return *mData.mDataRefList; }
 
 private:
 	union Values
@@ -46,8 +46,8 @@ private:
 		float					mFloat;				// For 'float' definitions
 		bool					mBoolean;			// For 'bool' definitions
 		string*					mString;			// For 'string' definitions
-		unsigned int			mDataRef;			// For 'Table' definitions
-		vector<unsigned int>*	mDataRefList;		// For 'Table*' definitions
+		size_t					mDataRef;			// For 'Table' definitions
+		vector<size_t>*			mDataRefList;		// For 'Table*' definitions
 	};
 
 	Values			mData;

@@ -17,11 +17,11 @@ public:
 	~KTable ();
 
 	bool			AddField		(const string& name, const Type& type);
-	unsigned int	NumFields		() const;
+	size_t			NumFields		() const;
 	bool			HasField		(const string& name);
-	unsigned int	GetNumFields	() const		{ return mFields.size(); }
-	const string&	GetFieldName	(unsigned int index) const;
-	const Type&		GetFieldType	(unsigned int index) const;
+	size_t			GetNumFields	() const		{ return mFields.size(); }
+	const string&	GetFieldName	(size_t index) const;
+	const Type&		GetFieldType	(size_t index) const;
 
 	string			GetName			() const		{ return mName; }
 

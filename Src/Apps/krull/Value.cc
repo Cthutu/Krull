@@ -37,7 +37,7 @@ Value::Value (const Type& type, const string& s)
 	mData.mString = new string(s);
 }
 
-Value::Value (const Type& type, const Data& data, unsigned int ref)
+Value::Value (const Type& type, const Data& data, size_t ref)
 {
 	K_ASSERT(type.GetType() == TypeValue_DataRef);
 	(void)data;
@@ -48,7 +48,7 @@ Value::Value (const Type& type, const Data& data)
 {
 	K_ASSERT(type.GetType() == TypeValue_DataRefList);
 	(void)data;
-	mData.mDataRefList = new vector<unsigned int>();
+	mData.mDataRefList = new vector<size_t>();
 }
 
 Value::~Value ()
@@ -59,7 +59,7 @@ Value::~Value ()
 // Table references
 //-----------------------------------------------------------------------------
 
-void Value::AddDataRef (unsigned int ref)
+void Value::AddDataRef (size_t ref)
 {
 	// We assume that the data holds a pointer to a vector of table references.
 	// We have no way to protect against this as type information is not stored
@@ -68,7 +68,7 @@ void Value::AddDataRef (unsigned int ref)
 	mData.mDataRefList->push_back(ref);
 }
 
-unsigned int Value::NumDataRefs () const
+size_t Value::NumDataRefs () const
 {
 	K_ASSERT(mData.mDataRefList != 0);
 	return mData.mDataRefList->size();

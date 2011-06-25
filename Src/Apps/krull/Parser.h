@@ -81,16 +81,17 @@ public:
 	static bool			IsKeyword	(Token token)			{ return (token > TOKEN_KEYWORDS) && (token < TOKEN_COUNT); }
 	static bool			IsName		(Token token)			{ return token == Token_Name; }
 	static bool			IsString	(Token token)			{ return token == Token_LiteralString; }
+	
+	bool				HasState	() const				{ return GetState() != 0; }
 
 protected:
 	char				NextChar	();
 	void				UngetChar	();
 
 	struct ParseState;
-	ParseState*			GetState	()						{ return mParseStack[mParseStack.size() - 1]; }
-	const ParseState*	GetState	() const				{ return mParseStack[mParseStack.size() - 1]; }
+	ParseState*			GetState	()						{ return mParseStack.size() ? mParseStack[mParseStack.size() - 1] : 0; }
+	const ParseState*	GetState	() const				{ return mParseStack.size() ? mParseStack[mParseStack.size() - 1] : 0; }
 
-private:
 	struct ParseState
 	{
 		// Filename
@@ -111,6 +112,7 @@ private:
 		void Init (const string& fileName, const char* buffer, unsigned int size);
 	};
 
+private:
 	// Token information
 	const char*		mTokenStart;
 	const char*		mTokenEnd;

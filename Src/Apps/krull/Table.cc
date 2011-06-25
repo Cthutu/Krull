@@ -46,7 +46,7 @@ bool KTable::AddField (const string& name, const Type& type)
 	return true;
 }
 
-unsigned int KTable::NumFields () const
+size_t KTable::NumFields () const
 {
 	return mFields.size();
 }
@@ -61,13 +61,13 @@ bool KTable::HasField (const string& name)
 	return false;
 }
 
-const string& KTable::GetFieldName (unsigned int index) const
+const string& KTable::GetFieldName (size_t index) const
 {
 	K_ASSERT(index < mFields.size());
 	return mFields[index].name;
 }
 
-const Type& KTable::GetFieldType (unsigned int index) const
+const Type& KTable::GetFieldType (size_t index) const
 {
 	K_ASSERT(index < mFields.size());
 	return mFields[index].type;

@@ -1,0 +1,291 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C976FD8013B56B55006D615A /* Compiler.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD6C13B56B55006D615A /* Compiler.cc */; };
+		C976FD8113B56B55006D615A /* Data.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD6E13B56B55006D615A /* Data.cc */; };
+		C976FD8213B56B55006D615A /* Filename.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7013B56B55006D615A /* Filename.cc */; };
+		C976FD8313B56B55006D615A /* Main.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7313B56B55006D615A /* Main.cc */; };
+		C976FD8413B56B55006D615A /* Parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7413B56B55006D615A /* Parser.cc */; };
+		C976FD8513B56B55006D615A /* Project.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7613B56B55006D615A /* Project.cc */; };
+		C976FD8613B56B55006D615A /* SqliteBackEnd.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7813B56B55006D615A /* SqliteBackEnd.cc */; };
+		C976FD8713B56B55006D615A /* Table.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7A13B56B55006D615A /* Table.cc */; };
+		C976FD8813B56B55006D615A /* Type.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7C13B56B55006D615A /* Type.cc */; };
+		C976FD8913B56B55006D615A /* Value.cc in Sources */ = {isa = PBXBuildFile; fileRef = C976FD7E13B56B55006D615A /* Value.cc */; };
+		C976FD8D13B56B63006D615A /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C976FD8A13B56B63006D615A /* sqlite3.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C976FD2713B569E3006D615A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C976FD2913B569E3006D615A /* krull */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = krull; sourceTree = BUILT_PRODUCTS_DIR; };
+		C976FD6A13B56B55006D615A /* Ast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ast.h; path = Src/Apps/krull/Ast.h; sourceTree = SOURCE_ROOT; };
+		C976FD6B13B56B55006D615A /* BackEnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackEnd.h; path = Src/Apps/krull/BackEnd.h; sourceTree = SOURCE_ROOT; };
+		C976FD6C13B56B55006D615A /* Compiler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Compiler.cc; path = Src/Apps/krull/Compiler.cc; sourceTree = SOURCE_ROOT; };
+		C976FD6D13B56B55006D615A /* Compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compiler.h; path = Src/Apps/krull/Compiler.h; sourceTree = SOURCE_ROOT; };
+		C976FD6E13B56B55006D615A /* Data.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Data.cc; path = Src/Apps/krull/Data.cc; sourceTree = SOURCE_ROOT; };
+		C976FD6F13B56B55006D615A /* Data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Data.h; path = Src/Apps/krull/Data.h; sourceTree = SOURCE_ROOT; };
+		C976FD7013B56B55006D615A /* Filename.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Filename.cc; path = Src/Apps/krull/Filename.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7113B56B55006D615A /* Filename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filename.h; path = Src/Apps/krull/Filename.h; sourceTree = SOURCE_ROOT; };
+		C976FD7213B56B55006D615A /* Krull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Krull.h; path = Src/Apps/krull/Krull.h; sourceTree = SOURCE_ROOT; };
+		C976FD7313B56B55006D615A /* Main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cc; path = Src/Apps/krull/Main.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7413B56B55006D615A /* Parser.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cc; path = Src/Apps/krull/Parser.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7513B56B55006D615A /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = Src/Apps/krull/Parser.h; sourceTree = SOURCE_ROOT; };
+		C976FD7613B56B55006D615A /* Project.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Project.cc; path = Src/Apps/krull/Project.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7713B56B55006D615A /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Project.h; path = Src/Apps/krull/Project.h; sourceTree = SOURCE_ROOT; };
+		C976FD7813B56B55006D615A /* SqliteBackEnd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SqliteBackEnd.cc; path = Src/Apps/krull/SqliteBackEnd.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7913B56B55006D615A /* SqliteBackEnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SqliteBackEnd.h; path = Src/Apps/krull/SqliteBackEnd.h; sourceTree = SOURCE_ROOT; };
+		C976FD7A13B56B55006D615A /* Table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cc; path = Src/Apps/krull/Table.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7B13B56B55006D615A /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = Src/Apps/krull/Table.h; sourceTree = SOURCE_ROOT; };
+		C976FD7C13B56B55006D615A /* Type.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Type.cc; path = Src/Apps/krull/Type.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7D13B56B55006D615A /* Type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Type.h; path = Src/Apps/krull/Type.h; sourceTree = SOURCE_ROOT; };
+		C976FD7E13B56B55006D615A /* Value.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Value.cc; path = Src/Apps/krull/Value.cc; sourceTree = SOURCE_ROOT; };
+		C976FD7F13B56B55006D615A /* Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Value.h; path = Src/Apps/krull/Value.h; sourceTree = SOURCE_ROOT; };
+		C976FD8A13B56B63006D615A /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = Src/Libs/Sqlite/sqlite3.c; sourceTree = SOURCE_ROOT; };
+		C976FD8B13B56B63006D615A /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = Src/Libs/Sqlite/sqlite3.h; sourceTree = SOURCE_ROOT; };
+		C976FD8C13B56B63006D615A /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version.h; path = Src/Libs/Sqlite/version.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C976FD2613B569E3006D615A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C976FD1E13B569E3006D615A = {
+			isa = PBXGroup;
+			children = (
+				C976FD2C13B569E3006D615A /* krull */,
+				C976FD2A13B569E3006D615A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C976FD2A13B569E3006D615A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C976FD2913B569E3006D615A /* krull */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C976FD2C13B569E3006D615A /* krull */ = {
+			isa = PBXGroup;
+			children = (
+				C976FD6913B56B3B006D615A /* Libraries */,
+				C976FD6713B56B34006D615A /* Application */,
+			);
+			path = krull;
+			sourceTree = "<group>";
+		};
+		C976FD6713B56B34006D615A /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				C976FD6A13B56B55006D615A /* Ast.h */,
+				C976FD6B13B56B55006D615A /* BackEnd.h */,
+				C976FD6C13B56B55006D615A /* Compiler.cc */,
+				C976FD6D13B56B55006D615A /* Compiler.h */,
+				C976FD6E13B56B55006D615A /* Data.cc */,
+				C976FD6F13B56B55006D615A /* Data.h */,
+				C976FD7013B56B55006D615A /* Filename.cc */,
+				C976FD7113B56B55006D615A /* Filename.h */,
+				C976FD7213B56B55006D615A /* Krull.h */,
+				C976FD7313B56B55006D615A /* Main.cc */,
+				C976FD7413B56B55006D615A /* Parser.cc */,
+				C976FD7513B56B55006D615A /* Parser.h */,
+				C976FD7613B56B55006D615A /* Project.cc */,
+				C976FD7713B56B55006D615A /* Project.h */,
+				C976FD7813B56B55006D615A /* SqliteBackEnd.cc */,
+				C976FD7913B56B55006D615A /* SqliteBackEnd.h */,
+				C976FD7A13B56B55006D615A /* Table.cc */,
+				C976FD7B13B56B55006D615A /* Table.h */,
+				C976FD7C13B56B55006D615A /* Type.cc */,
+				C976FD7D13B56B55006D615A /* Type.h */,
+				C976FD7E13B56B55006D615A /* Value.cc */,
+				C976FD7F13B56B55006D615A /* Value.h */,
+			);
+			name = Application;
+			sourceTree = "<group>";
+		};
+		C976FD6913B56B3B006D615A /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				C976FD8A13B56B63006D615A /* sqlite3.c */,
+				C976FD8B13B56B63006D615A /* sqlite3.h */,
+				C976FD8C13B56B63006D615A /* version.h */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C976FD2813B569E3006D615A /* krull */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C976FD3313B569E3006D615A /* Build configuration list for PBXNativeTarget "krull" */;
+			buildPhases = (
+				C976FD2513B569E3006D615A /* Sources */,
+				C976FD2613B569E3006D615A /* Frameworks */,
+				C976FD2713B569E3006D615A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = krull;
+			productName = krull;
+			productReference = C976FD2913B569E3006D615A /* krull */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C976FD2013B569E3006D615A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "PipeWerx Games";
+			};
+			buildConfigurationList = C976FD2313B569E3006D615A /* Build configuration list for PBXProject "krull" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = C976FD1E13B569E3006D615A;
+			productRefGroup = C976FD2A13B569E3006D615A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C976FD2813B569E3006D615A /* krull */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C976FD2513B569E3006D615A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C976FD8013B56B55006D615A /* Compiler.cc in Sources */,
+				C976FD8113B56B55006D615A /* Data.cc in Sources */,
+				C976FD8213B56B55006D615A /* Filename.cc in Sources */,
+				C976FD8313B56B55006D615A /* Main.cc in Sources */,
+				C976FD8413B56B55006D615A /* Parser.cc in Sources */,
+				C976FD8513B56B55006D615A /* Project.cc in Sources */,
+				C976FD8613B56B55006D615A /* SqliteBackEnd.cc in Sources */,
+				C976FD8713B56B55006D615A /* Table.cc in Sources */,
+				C976FD8813B56B55006D615A /* Type.cc in Sources */,
+				C976FD8913B56B55006D615A /* Value.cc in Sources */,
+				C976FD8D13B56B63006D615A /* sqlite3.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C976FD3113B569E3006D615A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = Src/Libs;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C976FD3213B569E3006D615A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = Src/Libs;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C976FD3413B569E3006D615A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C976FD3513B569E3006D615A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C976FD2313B569E3006D615A /* Build configuration list for PBXProject "krull" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C976FD3113B569E3006D615A /* Debug */,
+				C976FD3213B569E3006D615A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C976FD3313B569E3006D615A /* Build configuration list for PBXNativeTarget "krull" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C976FD3413B569E3006D615A /* Debug */,
+				C976FD3513B569E3006D615A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C976FD2013B569E3006D615A /* Project object */;
+}

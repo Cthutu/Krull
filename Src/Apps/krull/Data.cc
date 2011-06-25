@@ -50,7 +50,7 @@ Data::Status Data::StartEntry (const string& name)
 	}
 
 	Entry newEntry;
-	unsigned newIndex = mEntries.size();
+	size_t newIndex = mEntries.size();
 
 	mEntries.push_back(newEntry);
 	mEntryMap[name] = newIndex;
@@ -86,7 +86,7 @@ string Data::GetName () const
 	return mName;
 }
 
-unsigned int Data::GetNumEntries () const
+size_t Data::GetNumEntries () const
 {
 	return mEntries.size();
 }
@@ -99,7 +99,7 @@ Value Data::GetField (unsigned int entryIndex, unsigned int fieldIndex) const
 	return entry[fieldIndex];
 }
 
-unsigned int Data::GetCurrentFieldIndex () const
+size_t Data::GetCurrentFieldIndex () const
 {
 	K_ASSERT(mEntries.size() > 0);
 	const Entry& entry = mEntries[mEntries.size()-1];
@@ -107,7 +107,7 @@ unsigned int Data::GetCurrentFieldIndex () const
 	return entry.size();
 }
 
-unsigned int Data::GetEntryRef (const string& name) const
+size_t Data::GetEntryRef (const string& name) const
 {
 	EntryMap::const_iterator entry = mEntryMap.find(name);
 	if (entry == mEntryMap.end())

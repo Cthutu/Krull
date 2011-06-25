@@ -12,3 +12,5 @@ Build/*
 # Krull artifacts
 *.kx
 
+# Xcode artifacts
+krull.xcodeproj/xcuserdata

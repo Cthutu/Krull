@@ -8,7 +8,7 @@
 #include "SqliteBackEnd.h"
 extern "C"
 {
-#include "..\Libs\Sqlite\sqlite3.h"
+#include <Sqlite/sqlite3.h>
 };
 #include "Data.h"
 #include "Filename.h"
@@ -297,7 +297,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 
 					case TypeValue_DataRefList:
 						{
-							vector<unsigned int>& refs = value.GetDataRefList();
+							vector<size_t>& refs = value.GetDataRefList();
 
 							for (unsigned i = 0; i < refs.size(); ++i)
 							{
@@ -397,7 +397,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 bool SqliteBackEnd::Execute (const string& sql)
 {
 	sqlite3_stmt* dbCode = 0;
-	int result = sqlite3_prepare_v2(mSqlite, sql.c_str(), sql.length(), &dbCode, 0);
+	int result = sqlite3_prepare_v2(mSqlite, sql.c_str(), (int)sql.length(), &dbCode, 0);
 
 	bool buildResult = true;
 
@@ -435,10 +435,10 @@ string SqliteBackEnd::FromInt (int value) const
 	return number;
 }
 
-string SqliteBackEnd::FromUInt (unsigned int value) const
+string SqliteBackEnd::FromUInt (size_t value) const
 {
 	char number [32];
-	sprintf_s(number, 32, "%u", value);
+	sprintf_s(number, 32, "%zu", value);
 	return number;
 }
 

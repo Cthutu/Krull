@@ -64,7 +64,7 @@ bool Compiler::OpenFile (const string& filename, Parser& parser)
 		return false;
 	}
 	f.seekg(0, ios::end);
-	unsigned int fileSize = f.tellg();
+	unsigned int fileSize = (unsigned int)f.tellg();
 	f.seekg(0);
 	char* buffer = new char [fileSize];
 	f.read(buffer, fileSize);
@@ -86,7 +86,7 @@ bool Compiler::ErrorArgs (const Parser* parser, const char* errMsg, va_list args
 	char errorBuffer [1024];
 	_vsnprintf_s(errorBuffer, 1024, errMsg, args);
 
-	if (parser)
+	if (parser && parser->HasState())
 	{
 		cerr << parser->GetFileName() << " (" << parser->GetLine() << "): ";
 	}
@@ -166,7 +166,6 @@ bool Compiler::Process(const string& filename, BackEnd& backEnd)
 
 	if (!OpenFile(filename, parser))
 	{
-		cout << "Cannot open '" << filename << "'" << endl;
 		return false;
 	}
 
@@ -324,7 +323,7 @@ bool Compiler::ProcessTable (Parser& parser)
 			{
 				if (table.NumFields() == 0)
 				{
-					return Error(&parser, "Table '%s' has no fields", table.GetName());
+					return Error(&parser, "Table '%s' has no fields", table.GetName().c_str());
 				}
 				
 				// Table definition complete
@@ -494,8 +493,8 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 		}
 
 		// Check that we have enough data given
-		unsigned int numFieldsInTable = table.GetNumFields();
-		unsigned int numFieldsInData = data.GetCurrentFieldIndex();
+		size_t numFieldsInTable = table.GetNumFields();
+		size_t numFieldsInData = data.GetCurrentFieldIndex();
 		if (numFieldsInData != numFieldsInTable)
 		{
 			return Error(&parser, "Incorrect number of fields for data entry '%s'.  Expected %d entries", data.GetName().c_str(), numFieldsInTable);
@@ -509,7 +508,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 	Token token = parser.GetToken();
 
 	// Work out the type defined in the table
-	unsigned int fieldIndex = data.GetCurrentFieldIndex();
+	size_t fieldIndex = data.GetCurrentFieldIndex();
 	Type currentType = table.GetFieldType(fieldIndex);
 
 	switch(token)
@@ -531,9 +530,9 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 		{
 			string name = parser.GetString();
 			Data& lookupData = mProject->GetData(currentType.GetDataName());
-			unsigned int entryRef = lookupData.GetEntryRef(name);
+			size_t entryRef = lookupData.GetEntryRef(name);
 
-			if (entryRef == (unsigned int)-1)
+			if (entryRef == (size_t)-1)
 			{
 				// We could not find the entry
 				return Error(&parser, "Unknown data reference '%s' in data '%s'",
@@ -600,7 +599,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 				{
 					// This is a data reference.  Look it up and confirm it is valid
 					string name = parser.GetString();
-					unsigned int entryRef = lookupData.GetEntryRef(name);
+					size_t entryRef = lookupData.GetEntryRef(name);
 
 					if (entryRef == (unsigned int)-1)
 					{
@@ -614,7 +613,7 @@ bool Compiler::ProcessField (Parser& parser, const KTable& table, Data& data)
 				}
 				else
 				{
-					return Error(&parser, "Syntax error, expecting data reference name or ')', found '%s'", parser.ShortDesc());
+					return Error(&parser, "Syntax error, expecting data reference name or ')', found '%s'", parser.ShortDesc().c_str());
 				}
 				token = NextToken(parser);
 			}
@@ -648,6 +647,10 @@ bool Compiler::AddDataField (Parser& parser, Data& data, const Type& type, Value
 
 		case Data::Data_Error_TooMuchData:
 			return Error(&parser, "Too many parameters in data entry, should be only %d", data.GetTable().GetNumFields());
+				
+		default:
+			// Should never reach here!  But we add this to stop compiler warnings
+			return false;
 		}
 	}
 

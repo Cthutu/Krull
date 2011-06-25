@@ -37,15 +37,15 @@ public:
 	// Attributes
 	//
 	string			GetName					() const;
-	unsigned int	GetNumEntries			() const;
+	size_t			GetNumEntries			() const;
 	Value			GetField				(unsigned int entryIndex, unsigned int fieldIndex) const;
-	unsigned int	GetCurrentFieldIndex	() const;
-	unsigned int	GetEntryRef				(const string& name) const;
+	size_t			GetCurrentFieldIndex	() const;
+	size_t			GetEntryRef				(const string& name) const;
 	const KTable&	GetTable				() const			{ return mTable; }
 	
 private:
 	typedef vector<Value>				Entry;
-	typedef map<string, unsigned int>	EntryMap;
+	typedef map<string, size_t>			EntryMap;
 	typedef vector<Entry>				Entries;
 
 	Compiler&		mCompiler;

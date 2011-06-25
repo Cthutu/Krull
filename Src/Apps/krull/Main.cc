@@ -23,7 +23,7 @@ using namespace std;
 // No arguments
 //-----------------------------------------------------------------------------
 
-void NoArgs ()
+static void NoArgs ()
 {
 	printf("Krull: No arguments.\n");
 }
@@ -50,7 +50,7 @@ struct InputInfo
 
 //-----------------------------------------------------------------------------
 
-bool ProcessFlags (const char* flags, K_OUT InputInfo& info, K_OUT int& argIndex, char** argv)
+static bool ProcessFlags (const char* flags, K_OUT InputInfo& info, K_OUT int& argIndex, char** argv)
 {
 	for (char flag = *flags; flag != 0; flag = *(++flags))
 	{
@@ -73,7 +73,7 @@ bool ProcessFlags (const char* flags, K_OUT InputInfo& info, K_OUT int& argIndex
 // ProcessNamedCommand
 //-----------------------------------------------------------------------------
 
-bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_OUT int& argIndex, char** argv)
+static bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_OUT int& argIndex, char** argv)
 {
 	string cmd = command;
 
@@ -103,7 +103,7 @@ bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_OUT int&
 // Main entry point
 //-----------------------------------------------------------------------------
 
-int Start (int argc, char** argv)
+static int Start (int argc, char** argv)
 {
 	if (argc == 1)
 	{

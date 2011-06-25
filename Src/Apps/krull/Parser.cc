@@ -251,11 +251,11 @@ Token Parser::Next ()
 		}
 		UngetChar();
 		mTokenEnd = ps->mScan;
-		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
+		mHash = Hash(mTokenStart, (unsigned int)(mTokenEnd - mTokenStart), 0x12345678);
 
 		// Determine if this is a keyword or not
 		unsigned int tokens = gKeyWordHashes[mHash & 0x0f];
-		unsigned int sizeToken = mTokenEnd - mTokenStart;
+		size_t sizeToken = mTokenEnd - mTokenStart;
 		while (tokens != 0)
 		{
 			int index = (tokens & 0xff) - TOKEN_KEYWORDS;
@@ -300,7 +300,7 @@ Token Parser::Next ()
 		}
 
 		mTokenEnd = ps->mScan - 1;		// Ignore the trailing quote
-		mHash = Hash(mTokenStart, mTokenEnd - mTokenStart, 0x12345678);
+		mHash = Hash(mTokenStart, (unsigned int)(mTokenEnd - mTokenStart), 0x12345678);
 		return (mToken = Token_LiteralString);
 	}
 
@@ -434,7 +434,6 @@ void Parser::Describe() const
 	}
 	else if (IsOperator(mToken))
 	{
-		const char* ops = "().:*";
 		printf("Operator: '%c'", gOps[mToken - TOKEN_OPERATORS - 1]);
 	}
 	else if (IsKeyword(mToken))
@@ -467,7 +466,8 @@ string Parser::ShortDesc () const
 	case Token_Integer:
 		{
 			char intBuffer [20];
-			result = itoa(mInteger, intBuffer, 10);
+			sprintf(intBuffer, "%d", mInteger);
+			result = intBuffer;
 		}
 		break;
 
