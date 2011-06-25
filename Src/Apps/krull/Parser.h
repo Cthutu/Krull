@@ -61,7 +61,7 @@ public:
 	void				End			();
 
 	// Operations
-	Token				Next		();
+	Token				Next		(bool detectEOF = false);
 	static unsigned 	Hash		(const char* buffer, unsigned size, unsigned seed);
 	void				Describe	() const;
 	string				ShortDesc	() const;

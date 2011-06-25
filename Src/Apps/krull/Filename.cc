@@ -230,7 +230,14 @@ namespace FileName
 	
 	bool Delete (const string& fileName)
 	{
-		return unlink(fileName.c_str()) == 0;
+		if (unlink(fileName.c_str()))
+		{
+			return errno == ENOENT;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	
 	//-----------------------------------------------------------------------------

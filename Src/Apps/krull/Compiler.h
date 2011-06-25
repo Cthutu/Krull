@@ -40,7 +40,8 @@ protected:
 
 	// Compilation utilities
 	bool				ExpectToken			(Parser& parser, Token token);
-	Token				NextToken			(Parser& parser);
+	int					ExpectToken2		(Parser& parser, Token token1, Token token2);
+	Token				NextToken			(Parser& parser, bool detectEOF = false);
 
 	// Phrase compilation
 	bool				ProcessUses			(Parser& parser);														// Process: uses ...

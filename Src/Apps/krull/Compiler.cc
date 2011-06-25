@@ -248,9 +248,29 @@ bool Compiler::ExpectToken (Parser& parser, Token token)
 	return true;
 }
 
-Token Compiler::NextToken (Parser& parser)
+int Compiler::ExpectToken2 (Parser& parser, Token token1, Token token2)
 {
-	Token token = parser.Next();
+	Token nextToken = NextToken(parser);
+	
+	if (nextToken != token1 && nextToken != token2)
+	{
+		return Error(&parser, "Syntax error, expected '%s' or '%s' but found '%s'", 
+					 Parser::ShortDesc(token1).c_str(),
+					 Parser::ShortDesc(token2).c_str(),
+					 parser.ShortDesc().c_str());
+	}
+	
+	return
+		(nextToken == token1)
+			? 1
+			: (nextToken == token2)
+				? 2
+				: 0;
+}
+
+Token Compiler::NextToken (Parser& parser, bool detectEOF)
+{
+	Token token = parser.Next(detectEOF);
 	if (mDebugParser) parser.Describe();
 	return token;
 }
@@ -483,13 +503,14 @@ bool Compiler::ProcessEntry (Parser& parser, const KTable& table, Data& data)
 		}
 		Status("[DATA]    Processing entry '%s'...", parser.GetString().c_str());
 
-		if (!ExpectToken(parser, Token_ListOpen)) return false;
+		int entryType = ExpectToken2(parser, Token_ListOpen, Token_Colon);
+		if (!entryType) return false;
 
-		Token token = NextToken(parser);
-		while (token != Token_ListClose)
+		Token token = NextToken(parser, (entryType == 2));
+		while (token != (entryType == 1 ? Token_ListClose : Token_EOF))
 		{
 			if (!ProcessField(parser, table, data)) return false;
-			token = NextToken(parser);
+			token = NextToken(parser, (entryType == 2));
 		}
 
 		// Check that we have enough data given

@@ -159,7 +159,7 @@ static const char* gOps = "().:*";
 // Parser
 //-----------------------------------------------------------------------------
 
-Token Parser::Next ()
+Token Parser::Next (bool detectEOF)
 {
 	char ch;
 	ParseState* ps = GetState();
@@ -183,6 +183,11 @@ Token Parser::Next ()
 				{
 					ps = GetState();
 				}
+			}
+			else if (detectEOF && (ch == '\n'))
+			{
+				mTokenEnd = ps->mScan;
+				return (mToken = Token_EOF);
 			}
 		}
 		while ((ch <= ' ') || (ch > 126));
