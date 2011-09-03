@@ -38,6 +38,7 @@ struct InputInfo
 	vector<string>		fileNames;
 	bool				verbose;
 	bool				debugParser;
+	bool				addSymbols;
 
 	InputInfo()
 		: verbose(false)
@@ -58,6 +59,11 @@ static bool ProcessFlags (const char* flags, K_OUT InputInfo& info, K_OUT int& a
 		{
 			// Verbose
 			info.verbose = true;
+		}
+		else if (flag == 's')
+		{
+			// Add symbols
+			info.addSymbols = true;
 		}
 		else
 		{
@@ -83,7 +89,8 @@ static bool ProcessNamedCommand (const char* command, K_OUT InputInfo& info, K_O
 		printf("Syntax: krull [flags] [files]\n\n");
 
 		printf("--help    Display command line help.\n");
-		printf("-v        Verbose mode");
+		printf("-v        Verbose mode\n");
+		printf("-s        Add symbols to output\n");
 
 		return false;
 	}
@@ -156,7 +163,7 @@ static int Start (int argc, char** argv)
 
 	// Choose the back-end
 	BackEnd* backEnd = 0;
-	backEnd = new SqliteBackEnd();
+	backEnd = new SqliteBackEnd(inputInfo.addSymbols);
 
 	for (vector<string>::const_iterator it = inputInfo.fileNames.begin();
 		 it != inputInfo.fileNames.end();

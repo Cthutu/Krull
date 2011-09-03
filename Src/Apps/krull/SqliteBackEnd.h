@@ -21,7 +21,7 @@ class SqliteBackEnd
 	: public BackEnd
 {
 public:
-	SqliteBackEnd ();
+	SqliteBackEnd (bool addSymbols);
 	virtual ~SqliteBackEnd ();
 
 	virtual string		GetExtension		() const		{ return string("kx"); }
@@ -35,6 +35,7 @@ protected:
 
 private:
 	sqlite3*			mSqlite;
+	bool				mAddSymbols;
 };
 
 //-----------------------------------------------------------------------------

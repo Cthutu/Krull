@@ -8,9 +8,12 @@ Build/*
 
 # VIM artifacts
 *~
+*.swp
 
 # Krull artifacts
 *.kx
 
 # Xcode artifacts
 krull.xcodeproj/xcuserdata
+krull.xcodeproj/project.xcworkspace
+

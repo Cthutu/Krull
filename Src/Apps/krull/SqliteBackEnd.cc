@@ -20,8 +20,9 @@ extern "C"
 // Constructor
 //-----------------------------------------------------------------------------
 
-SqliteBackEnd::SqliteBackEnd ()
+SqliteBackEnd::SqliteBackEnd (bool addSymbols)
 	: mSqlite(0)
+	, mAddSymbols(addSymbols)
 {
 
 }
@@ -91,14 +92,14 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//
 			//-----------------------------------------------------------------------------
 
-			sql = "CREATE TABLE main.`@";
+			sql = "CREATE TABLE main.`_";
 			sql += table->GetName();
 			sql += "` ( name TEXT, type TEXT ) ;";
 			Execute(sql);
 
 			for (unsigned int i = 1; i < table->GetNumFields(); ++i)
 			{
-				sql = "INSERT INTO main.`@";
+				sql = "INSERT INTO main.`_";
 				sql += table->GetName();
 				sql += "` (name, type) VALUES ( \"";
 
@@ -145,14 +146,14 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			//
 			//		CREATE TABLE main.<table name>
 			//		(
-			//			krull_id		TEXT PRIMARY KEY,
+			//			krull_id		TEXT PRIMARY KEY,     (only if mAddSymbols = true)
 			//			<field name>	<field type>
 			//			...
 			//		);
 			//
 			// SQL code to create a sub table:
 			//
-			//		CREATE TABLE main.`<field name>@<table name>`
+			//		CREATE TABLE main.`<field name>_<table name>`
 			//		(
 			//			id				INTEGER,
 			//			ref				INTEGER
@@ -162,10 +163,17 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 			
 			sql = "CREATE TABLE main.";
 			sql += data->GetName();
-			sql += " ( krull_id TEXT PRIMARY KEY";
+			if (mAddSymbols)
+			{
+				sql += " ( krull_id TEXT PRIMARY KEY";
+			}
+			else
+			{
+				sql += " ( ";
+			}
 
 			// Cycle through all the columns
-
+			
 			for (unsigned int i = 1; i < table.GetNumFields(); ++i)
 			{
 				string fieldName = table.GetFieldName(i);
@@ -185,8 +193,10 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				}
 
 				if (!buildResult) break;
+				
+				if (mAddSymbols || (i > 1)) sql += ", ";
 
-				sql += ", " + fieldName + " " + sqlType;
+				sql += fieldName + " " + sqlType;
 
 				//
 				// Handle sub-tables
@@ -195,7 +205,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				{
 					string sqlSubTable = "CREATE TABLE main.`";
 					sqlSubTable += fieldName;
-					sqlSubTable += "@";
+					sqlSubTable += "_";
 					sqlSubTable += data->GetName();
 					sqlSubTable += "` ( id INTEGER, ref INTEGER ) ;";
 					Execute(sqlSubTable);
@@ -236,10 +246,11 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				//
 				// Column names
 				//
+				unsigned initialField = mAddSymbols ? 0 : 1;
 				sql += "( ";
-				for (unsigned field = 0; field < table.GetNumFields(); ++field)
+				for (unsigned field = initialField; field < table.GetNumFields(); ++field)
 				{
-					if (field != 0)
+					if (field != initialField)
 					{
 						sql += ", ";
 					}
@@ -254,11 +265,11 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 				// Insert row name
 				
 
-				for (unsigned field = 0; field < table.GetNumFields(); ++field)
+				for (unsigned field = initialField; field < table.GetNumFields(); ++field)
 				{
 					Value value = data->GetField(row, field);
 
-					if (field != 0)
+					if (field != initialField)
 					{
 						sql += ", ";
 					}
@@ -306,7 +317,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 							{
 								string sqlSubTable = "INSERT INTO main.`";
 								sqlSubTable += table.GetFieldName(field);
-								sqlSubTable += "@";
+								sqlSubTable += "_";
 								sqlSubTable += data->GetName();
 								sqlSubTable += "` (`id`, `ref`) VALUES ( ";
 								sqlSubTable += FromUInt(row+1);
@@ -342,7 +353,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 		//
 		// SQL code for main type information table:
 		//
-		//		CREATE TABLE main.`@@type`
+		//		CREATE TABLE main.`__type`
 		//		(
 		//			id			INTEGER PRIMARY KEY ASC,
 		//			dataName	TEXT,
@@ -351,7 +362,7 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 		//
 		// SQL code for add rows to main type information table:
 		//
-		//		INSERT INTO main.`@@type`
+		//		INSERT INTO main.`__type`
 		//		(
 		//			dataName,
 		//			tableName,
@@ -364,11 +375,11 @@ bool SqliteBackEnd::Build (const string& fileName, const Compiler& compiler, con
 		//
 		//-----------------------------------------------------------------------------
 
-		Execute("CREATE TABLE main.`@@type` (id INTEGER PRIMARY KEY ASC, dataName TEXT, tableName TEXT);");
+		Execute("CREATE TABLE main.`__type` (id INTEGER PRIMARY KEY ASC, dataName TEXT, tableName TEXT);");
 
 		for (const Data* data = project.FirstData(); data != 0; data = project.NextData())
 		{
-			string sql = "INSERT INTO main.`@@type` ( dataName, tableName ) VALUES ( \"";
+			string sql = "INSERT INTO main.`__type` ( dataName, tableName ) VALUES ( \"";
 			sql += data->GetName();
 			sql += "\", \"";
 			sql += data->GetTable().GetName();
