@@ -58,7 +58,6 @@
 		C976FD7F13B56B55006D615A /* Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Value.h; path = Src/Apps/krull/Value.h; sourceTree = SOURCE_ROOT; };
 		C976FD8A13B56B63006D615A /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = Src/Libs/Sqlite/sqlite3.c; sourceTree = SOURCE_ROOT; };
 		C976FD8B13B56B63006D615A /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = Src/Libs/Sqlite/sqlite3.h; sourceTree = SOURCE_ROOT; };
-		C976FD8C13B56B63006D615A /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version.h; path = Src/Libs/Sqlite/version.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,7 +130,6 @@
 			children = (
 				C976FD8A13B56B63006D615A /* sqlite3.c */,
 				C976FD8B13B56B63006D615A /* sqlite3.h */,
-				C976FD8C13B56B63006D615A /* version.h */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -162,6 +160,7 @@
 		C976FD2013B569E3006D615A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "PipeWerx Games";
 			};
 			buildConfigurationList = C976FD2313B569E3006D615A /* Build configuration list for PBXProject "krull" */;
